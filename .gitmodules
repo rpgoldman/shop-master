@@ -3,7 +3,7 @@
 	url = https://gitlab.common-lisp.net/alexandria/alexandria
 [submodule "jenkins/ext/fiveam"]
 	path = jenkins/ext/fiveam
-	url = https://github.com/cl-fiveam/fiveam ext/fiveam
+	url = https://github.com/cl-fiveam/fiveam.git
 [submodule "jenkins/ext/iterate"]
 	path = jenkins/ext/iterate
 	url = https://gitlab.common-lisp.net/iterate/iterate.git
