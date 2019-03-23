@@ -1,12 +1,12 @@
 \input texinfo
-@macro sysname
-SHOP3
+@macro sysname {}
+@sc{Shop3}
 @end macro
 
 @settitle SHOP3 Manual
 @copying
-Copyright @copyright{} 2019 SIFT, LLC
-Original materials @copyright{} University of Maryland
+Copyright @copyright{} 2019 SIFT, LLC.
+Original materials @copyright{} 2002 University of Maryland.
 
 This document is made available under the Creative Commons
 Attribution-ShareAlike 4.0 International Public License
@@ -14,13 +14,14 @@ Attribution-ShareAlike 4.0 International Public License
 
 @titlepage
 @title SHOP3 Manual
-SIFT, LLC
+@author Robert P. Goldman @sup{1}, Dana Nau @sup{2}, and Contributors
+@sup{1} SIFT, LLC
 
 319 North First Avenue, Suite 400
 
 Minneapolis, MN 55401, USA
 
-Department of Computer Science
+@sup{2} Department of Computer Science
 
 University of Maryland
 
@@ -60,7 +61,7 @@ altogether. - Robert P. Goldman}
 * Internal Technical Information::
 * PDDL Compatibility::
 * Differences between SHOP 1x, SHOP2, and SHOP3: Version Differences.
-* General Notes on @sysname::
+* General Notes on @sysname {}: General Notes on SHOP3.
 * Acknowledgments::
 * References::
 @end menu
@@ -271,7 +272,7 @@ To enable it you may have to
 @c [@emph{name@sub{n}}] @emph{C@sub{n}})”
 
 @node The SHOP3 Formalism, Running SHOP3, Execution Environment, Top
-@chapter The @sysname Formalism
+@chapter The @sysname {} Formalism
 The inputs to @sysname are a @emph{planning domain} and either a single
 @emph{planning problem} or a @emph{planning problem set}. Planning
 domains are composed of @emph{operators}, @emph{methods}, and
@@ -1225,7 +1226,7 @@ order given. The @strong{cost} of the plan @emph{p} is @emph{c@sub{1 }}+
 plan is 0).
 
 @node Running SHOP3, Using the SHOP Theorem Prover, The SHOP3 Formalism, Top
-@chapter Running @sysname
+@chapter Running @sysname {}
 The latest version of @sysname is loaded by using the ASDF system
 definition facility. The first of the following subsections explains how
 to use ASDF to load @sysname. Note that previous methods of starting @sysname,
@@ -1814,7 +1815,7 @@ within @sysname that are used to accomplish those semantics.
 @menu
 * Internal Knowledge Structures::
 * Formal Semantics::
-* Key Functions in @sysname::
+* Key Functions in @sysname: Key Functions in SHOP3.
 @end menu
 
 @node Internal Knowledge Structures, Formal Semantics, Internal Technical Information, Internal Technical Information
@@ -2029,7 +2030,7 @@ would be found by a left-to-right depth-first search. For example, if
 tagged conjunct (:first (walking-distance ?y)), the mgs from @emph{S}
 and @emph{X} is ((?y . convenience-store)).
 
-@node Formal Semantics, Key Functions in @sysname, Internal Knowledge Structures, Internal Technical Information
+@node Formal Semantics, Key Functions in SHOP3, Internal Knowledge Structures, Internal Technical Information
 @section Formal Semantics
 @anchor{#formal-semantics}
 Recall that a plan is a list of operator invocations with costs and that
@@ -2485,15 +2486,16 @@ P@sub{2}
 Then P@sub{1} and P@sub{2} are all of the plans that solve
 (@emph{S,M,L,D}).
 
-@node Key Functions in @sysname,  , Formal Semantics, Internal Technical Information
-@section Key Functions in @sysname
-@anchor{#key-functions-in-@sysname}
+@node Key Functions in SHOP3,  , Formal Semantics, Internal Technical Information
+@section Key Functions in @sc{Shop3}
 Below are some important functions in the Lisp implementation of @sysname.
 They should be of interest to anyone who wishes to modify @sysname or to
 directly access internal capabilities of @sysname. Pseudocode algorithms
 for the main planning functions of @sysname are also presented.
 
+@lisp
 (apply-substitution e u)
+@end lisp
 
 @emph{e} is an expression and @emph{u} is a substitution. The function
 returns @emph{e@sup{u}}.
@@ -2974,7 +2976,7 @@ precisely:
 @end itemize
 
 @quotation
-precond ::= <PDDL goalφ> |
+precond ::= <PDDL goalφ>|
 
 (:sort-by <var> [<rel>] <PDDL goal@sub{<var>,φ}>
 @end quotation
@@ -3053,8 +3055,8 @@ ADL-MIXIN
 
 @end itemize
 
-@node Version Differences, General Notes on @sysname, PDDL Compatibility, Top
-@chapter Differences between SHOP 1.x, SHOP2 and @sysname
+@node Version Differences, General Notes on SHOP3, PDDL Compatibility, Top
+@chapter Differences between SHOP 1.x, SHOP2 and @sysname {}
 The differences between @sysname and SHOP 1.x can be grouped in two sets:
 syntactic changes in the domain definitions and differences in
 functionality.
@@ -3421,9 +3423,8 @@ interface.
 @sysname is largely backward compatible with SHOP 1.x . @sysname can run most
 SHOP 1.x knowledge bases with only little or no modification.
 
-@node General Notes on @sysname, Acknowledgments, Version Differences, Top
-@chapter General Notes on @sysname
-@anchor{#general-notes-on-@sysname}
+@node General Notes on SHOP3, Acknowledgments, Version Differences, Top
+@chapter General Notes on @sysname {}
 @enumerate 
 @item
 Since the null conjunct is always true, an axiom of the form (:- a nil)
@@ -3504,7 +3505,7 @@ search and in the second case it will use an iterative-deepening search:
 (find-plans 'p :which :id-first)
 @end quotation
 
-@node Acknowledgments, References, General Notes on @sysname, Top
+@node Acknowledgments, References, General Notes on SHOP3, Top
 @chapter Acknowledgments
 @anchor{#acknowledgments}
 Original University of Maryland work on @sysname was supported in part by
@@ -3518,14 +3519,22 @@ DAAH01-03-C-R177, Army AFDD contract NAS-0155(MJH), Delivery Order 920,
 by the Air Force Research Laboratory (AFRL) under contract
 FA8750-16-C-0182,and by Contract FA8650-11-C-7191 with the US Defense
 Advanced Research Projects Agency (DARPA) and the Air Force Research
-Laboratory
+Laboratory.
 
 SIFT LLC work was also supported by Internal Research and Development.
 
 Joint SIFT, LLC and University of Maryland work was supported by DARPA
 contract FA8650-06-C-7606.
 
-Opinions expressed here do not reflect those of the funders.
+Recent SIFT work on the manual was supported by the Defense Advanced
+Research Projects Agency (DARPA) and the Air Force Research Laboratory
+under Contract No. FA8750-17-C-0184.
+
+Any opinions, findings and conclusions or recommendations expressed in
+this material are those of the author(s) and do not necessarily reflect
+the views of the Defense Advanced Research Projects Agency (DARPA), the
+Department of Defense, the National Science Foundation, the University
+of Maryland, SIFT, or the United States Government.  
 
 @node References,  , Acknowledgments, Top
 @chapter References
@@ -3544,3 +3553,5 @@ Tech report TR 4157, University of Maryland, College Park, MD, June
 [Nau @emph{et al.}, 2001] D. S. Nau, H. Muñoz-Avila Y. Cao, A. Lotem,
 and.S. Mitchell. Totally Ordered Planning with Partially Ordered
 Subtasks. In @emph{IJCAI-01}, 2001.
+
+@bye
