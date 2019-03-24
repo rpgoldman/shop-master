@@ -1914,6 +1914,31 @@ ADL-MIXIN
 One of the main extensions that SIFT has made to @sysname {} is to make its
 theorem prover usable separately. The @sysname {} theorem-prover is very
 similar to Prolog, but operates over a state that changes over time.
+Note, however, that the prover does not (at least not yet) support
+temporal modalities such as ``previously,'' ``next,'' or ``always.''
+
+The theorem-prover is supplied only as a toolbox unlike the unifier
+(@pxref{The SHOP Unifier}), which provides functionality that is ready to
+use ``out-of-the box.''  Specifically, it does not contain any built-in
+functionality for advancing the world state; those need to be developed
+by the programmer, based on facilities supplied by @sysname{}'s
+``common'' subsystem.
+The theorem-prover makes relies critically on the unifier subsystem, and
+re-exports from the theorem-prover package most of the key functions
+from the unifier package.
+
+The top-level function of the theorem-prover is @emph{query}, which is
+built on top of the more difficult-to-use @emph{find-satisfiers}:
+
+@include include/fun-shopthpr-query.texinfo
+@include include/fun-shopthpr-find-satisfiers.texinfo
+
+
+The theorem prover has its own notion of a @emph{domain} object, but
+unlike the full @sysname{} domain, this one supports only specification
+of axioms (although it can be extended by the programmer).
+
+@include include/class-shopthpr-thpr-domain.texinfo
 
 @node The SHOP Unifier, Internal Technical Information, The SHOP Theorem Prover, Top
 @chapter The SHOP Unifier
