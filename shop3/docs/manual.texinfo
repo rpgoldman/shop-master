@@ -2,12 +2,14 @@
 @macro sysname {}
 @sc{Shop3}
 @end macro
-@macro shop {}
+@macro SHOP {}
 @sc{Shop}
 @end macro
 @macro shoptwo {}
 @sc{Shop2}
 @end macro
+
+@include include/sb-texinfo.texinfo
 
 @settitle SHOP3 Manual
 @copying
@@ -50,15 +52,21 @@ College Park, MD 20742, USA
 @menu
 * Introduction::
 * Execution Environment::
-* Running SHOP3:: 
+* Running SHOP3::
 * The SHOP3 Formalism::
-* Using the SHOP Theorem Prover::
+* PDDL Support::
+* The SHOP Theorem Prover::
+* The SHOP Unifier::
 * Internal Technical Information::
-* PDDL Compatibility::
 * Differences between SHOP 1x, SHOP2, and SHOP3: Version Differences.
 * General Notes on @sysname {}: General Notes on SHOP3.
 * Acknowledgments::
 * References::
+* Function Index::
+* Type and Class Index::
+* Variable Index::
+* Concept Index::
+* Colophon::
 @end menu
 
 
@@ -116,11 +124,11 @@ Prolog-style rule-based Horn clause deduction over state sequences.
 @c FIXME: When we have chapters for these, add cross-references.
 
 
-The planners in the @shop {} family have the following distinctive characteristics:
+The planners in the @SHOP {} family have the following distinctive characteristics:
 
 @itemize
 @item
-@shop {} knows the current state-of-the-world at each step of the planning
+@SHOP {} knows the current state-of-the-world at each step of the planning
 process.
 
 @item
@@ -148,7 +156,7 @@ such domain-specific algorithms.
 for quantifiers and conditional effects in methods and operators.
 
 @item
-@shoptwo {} and @sysname {} (unlike @shop {}) allow a combination of partially ordered and fully ordered
+@shoptwo {} and @sysname {} (unlike @SHOP {}) allow a combination of partially ordered and fully ordered
 task networks through the use of the @code{:unordered} and
 @code{:ordered} keywords.
 
@@ -166,7 +174,7 @@ to get the lowest cost plan that is found within the given time limit.
 
 @item
 @sysname {} adds support for the Planner Domain Description Language
-(PDDL), and updates the @shop {} language for easier domain engineering.
+(PDDL), and updates the @SHOP {} language for easier domain engineering.
 
 @end itemize
 
@@ -765,7 +773,7 @@ defined, @sysname {} invokes that routine with the argument @code{'(and (on ?b1 
 
 
 
-@node The SHOP3 Formalism, Using the SHOP Theorem Prover, Running SHOP3, Top
+@node The SHOP3 Formalism, PDDL Support, Running SHOP3, Top
 @chapter The @sysname {} Formalism
 The inputs to @sysname {} are a @emph{planning domain} and either a single
 @emph{planning problem} or a @emph{planning problem set}. Planning
@@ -1720,14 +1728,234 @@ order given. The @strong{cost} of the plan @emph{p} is @emph{c@sub{1 }}+
 plan is 0).
 
 
-@node Using the SHOP Theorem Prover, Internal Technical Information, The SHOP3 Formalism, Top
-@chapter Using the SHOP Theorem Prover
+@node PDDL Support, The SHOP Theorem Prover, The SHOP3 Formalism, Top
+@chapter PDDL Support
+@anchor{#pddl-compatibility}
+The current release of @sysname {} provides a preliminary capability to
+incorporate PDDL domain definitions into a @sysname {} domain. You should be
+able to incorporate components of a PDDL domain definition into a @sysname
+domain definition of :type pddl-domain or simple-pddl-domain. A
+pddl-domain corresponds to a PDDL domain of the ADL type. The
+pddl-domain uses conditional-effects, existential-preconditions,
+universal-preconditions, and equality (note that these are @emph{PDDL}
+conditional effects, existential preconditions and universal
+preconditions; these are @emph{not} SHOP-syntax condition effects,
+etc.). A simple-pddl-domain will not have conditional-effects,
+existential-preconditions, universal-preconditions, or equality.
+
+Currently the PDDL integration is a little bumpy, and details are in
+flux.
+
+PDDL action names are translated into names that SHOP will recognize as
+primitives (e.g., move would become !move, and would have to be
+referenced that way in SHOP method definitions that use it).
+
+You must splice the PDDL domain components into the SHOP domain
+definition. Typically, the best way to do this is to use an :include
+form (see ).
+
+Fully ground STRIPS-style domains -- i.e., those where a set of STRIPS
+operators has been exploded into a large set of ground operators by some
+automated transformation -- will work very poorly.
+
+Note that the parsing of PDDL domains in SHOP is not strict. This is
+intentional, because we don't want to make it impossible to include SHOP
+constructs together with PDDL constructs. However, there should probably
+be a “strict mode” that checks for true conformance with PDDL syntax.
+@menu
+* PDDL Methods::
+@end menu
+
+@node PDDL Methods,  , PDDL Support, PDDL Support
+@section PDDL Methods
+@anchor{#pddl-methods}
+In order to support replanning, we have developed “PDDL methods” that
+have more limited expressive power than normal @sysname {} methods, and that
+have clearer semantics. This feature is @emph{experimental:} the syntax,
+semantics, and implementation are all likely to change.
+
+PDDL method proposed syntax:
+
+@lisp
+(:pddl-method @emph{head@sub{[φ]} precond@sub{[φ]} body@sub{[φ]}})
+@end lisp
+
+
+As in normal @sysname {} methods (see Section 4.11), a PDDL Method's head is a
+task. We notate it here as @emph{head@sub{[φ]}} in order to indicate
+that some set of variables, φ, may appear free in the head. Similarly,
+we have @emph{precond@sub{[φ]}} and @emph{body@sub{[φ] }}to indicate
+that φ may appear free in the preconditions and the body. A PDDL
+method's preconditions must be an enhanced PDDL goal expression (see
+below). A PDDL method's body must be an ordered task network. In the
+interests of clean syntax, task network keywords (:ordered and
+:unordered) are @emph{not} optional, and must be provided. For the
+moment, only ordered task networks are supported; unordered task
+networks may be supported later.
+
+Note that provision for free variables does not relax the constraint
+that all operators must be ground when inserted into the plan. The
+intention is to allow the variables in φ to be bound by the
+preconditions. As in PDDL operators, only the variables in the head of a
+PDDL method are scoped over the preconditions and the body (in standard
+@sysname {} methods we have Prolog-style scoping where any free variable is
+implicitly scoped over the entire method).
+
+Note also that PDDL methods do @emph{not} permit multiple precondition
+sets and task networks in a single PDDL method form, and so do
+@emph{not} support the if-then-else semantics of @sysname {} method forms. To
+get this kind of semantics in PDDL methods, the programmer must supply a
+set of methods with mutually-exclusive and exhaustive preconditions.
+
+@c FIXME: Fix cross-reference.
+PDDL methods may only be used in domains that are a subclass of
+@code{SIMPLE-PDDL-DOMAIN} (see Section 8.1.2).
+@menu
+* Enhanced Preconditions::
+* PDDL Domain Classes::
+@end menu
+
+@node Enhanced Preconditions, PDDL Domain Classes, PDDL Methods, PDDL Methods
+@subsection Enhanced Preconditions
+@anchor{#enhanced-preconditions}
+PDDL method preconditions are based on PDDL @emph{goals}, but with the
+following extensions:
+
+@itemize
+@item
+A PDDL method's preconditions may use the @code{:sort-by}        keyword. More
+precisely:
+
+@end itemize
+
+@quotation
+precond ::= <PDDL goalφ>|
+
+(:sort-by <var> [<rel>] <PDDL goal@sub{<var>,φ}>
+@end quotation
+@itemize
+@item
+As noted above, variables that appear free in the head of the PDDL
+method may appear free in the precondition, hence the use of <PDDL
+goalφ> and <PDDL goal@sub{<var>,φ}>.
+
+@end itemize
+
+PDDL goals are as described in the PDDL syntax (we have used the PDDL
+2.1 paper as primary source). Note that PDDL goals with free variables
+are permitted, as long as the free variables appear in the parameters
+for the task.
+
+Currently we do not support typing in PDDL method task heads, but this
+could change.
+
+@node PDDL Domain Classes,  , Enhanced Preconditions, PDDL Methods
+@subsection PDDL Domain Classes
+@anchor{#pddl-domain-classes}
+In order to implement the requirements of PDDL, @sysname {} contains a number
+of classes, which can be used when defining domains with defdomain (see
+Section 4.12):
+
+@itemize
+@item
+SIMPLE-PDDL-DOMAIN -- this is the base class. All PDDL domain classes
+should include this class.
+
+@item
+PDDL-DOMAIN -- for historical reasons, this class corresponds roughly to
+PDDL domains with the ADL requirements. Use of this class is
+@emph{deprecated;} it was added without sufficient thought.
+
+@item
+ADL-DOMAIN -- SIMPLE-PDDL-DOMAIN with ADL-MIXIN (see below).
+
+@item
+Mixin classes for different requirements:
+
+@itemize
+@item
+NEGATIVE-PRECONDITIONS-MIXIN
+
+@item
+DISJUNCTIVE-PRECONDITIONS-MIXIN
+
+@item
+UNIVERSAL-PRECONDITIONS-MIXIN
+
+@item
+EXISTENTIAL-PRECONDITIONS-MIXIN
+
+@item
+QUANTIFIED-PRECONDITIONS-MIXIN -- this simply inherits universal and
+existential preconditions, since they are typically used together.
+
+@item
+CONDITIONAL-EFFECTS-MIXIN
+
+@item
+EQUALITY-MIXIN
+
+@item
+PDDL-TYPING-MIXIN
+
+@item
+COSTS-MIXIN
+
+@item
+ADL-MIXIN
+
+@end itemize
+
+@end itemize
+
+@node The SHOP Theorem Prover, The SHOP Unifier, PDDL Support, Top
+@chapter The SHOP Theorem Prover
 @anchor{#using-the-shop-theorem-prover}
 One of the main extensions that SIFT has made to @sysname {} is to make its
 theorem prover usable separately. The @sysname {} theorem-prover is very
 similar to Prolog, but operates over a state that changes over time.
 
-@node Internal Technical Information, PDDL Compatibility, Using the SHOP Theorem Prover, Top
+@node The SHOP Unifier, Internal Technical Information, The SHOP Theorem Prover, Top
+@chapter The SHOP Unifier
+
+The top level function of the unifier is @code{unify}
+
+@include include/fun-shopunif-unify.texinfo
+
+The @code{unify} function is also exported from the @sysname{}
+theorem-prover package and the top level @sysname{} package.
+
+To check the results of unification, @sysname{} offers these predicates:
+
+@include include/macro-shopunif-unify-p.texinfo
+@include include/macro-shopunif-unify-fail.texinfo 
+@include include/macro-shopunif-unify-fail-p.texinfo
+
+A @emph{binding-list} or @emph{substitution} is a list of bindings.  To
+incorporate a unifier in a target expression, use
+@code{apply-substitution}:
+
+@include include/macro-shopunif-apply-substitution.texinfo
+
+The following are some predicates that may be useful to a programmer using
+the unifier at a low level.
+
+@include include/macro-shopunif-variable-p.texinfo
+
+@include include/fun-shopunif-variablep.texinfo
+
+@include include/fun-shopunif-anonymous-var-p.texinfo
+
+@include include/fun-shopunif-groundp.texinfo
+
+
+Finally, before unifying, it may be necessary to @emph{standardize} the
+expressions -- renaming variables to be unique.
+
+@include include/fun-shopunif-standardize.texinfo
+
+
+@node Internal Technical Information, Version Differences, The SHOP Unifier, Top
 @chapter Internal Technical Information
 @anchor{#internal-technical-information}
 This section presents information about the internal workings of the
@@ -2804,187 +3032,8 @@ specified by the list or problem set, and then returns nil. The keywords
 are simply passed on to find-plans.
 @end quotation
 
-@node PDDL Compatibility, Version Differences, Internal Technical Information, Top
-@chapter PDDL Compatibility
-@anchor{#pddl-compatibility}
-The current release of @sysname {} provides a preliminary capability to
-incorporate PDDL domain definitions into a @sysname {} domain. You should be
-able to incorporate components of a PDDL domain definition into a @sysname
-domain definition of :type pddl-domain or simple-pddl-domain. A
-pddl-domain corresponds to a PDDL domain of the ADL type. The
-pddl-domain uses conditional-effects, existential-preconditions,
-universal-preconditions, and equality (note that these are @emph{PDDL}
-conditional effects, existential preconditions and universal
-preconditions; these are @emph{not} SHOP-syntax condition effects,
-etc.). A simple-pddl-domain will not have conditional-effects,
-existential-preconditions, universal-preconditions, or equality.
 
-Currently the PDDL integration is a little bumpy, and details are in
-flux.
-
-PDDL action names are translated into names that SHOP will recognize as
-primitives (e.g., move would become !move, and would have to be
-referenced that way in SHOP method definitions that use it).
-
-You must splice the PDDL domain components into the SHOP domain
-definition. Typically, the best way to do this is to use an :include
-form (see ).
-
-Fully ground STRIPS-style domains -- i.e., those where a set of STRIPS
-operators has been exploded into a large set of ground operators by some
-automated transformation -- will work very poorly.
-
-Note that the parsing of PDDL domains in SHOP is not strict. This is
-intentional, because we don't want to make it impossible to include SHOP
-constructs together with PDDL constructs. However, there should probably
-be a “strict mode” that checks for true conformance with PDDL syntax.
-@menu
-* PDDL Methods::
-@end menu
-
-@node PDDL Methods,  , PDDL Compatibility, PDDL Compatibility
-@section PDDL Methods
-@anchor{#pddl-methods}
-In order to support replanning, we have developed “PDDL methods” that
-have more limited expressive power than normal @sysname {} methods, and that
-have clearer semantics. This feature is @emph{experimental:} the syntax,
-semantics, and implementation are all likely to change.
-
-PDDL method proposed syntax:
-
-@lisp
-(:pddl-method @emph{head@sub{[φ]} precond@sub{[φ]} body@sub{[φ]}})
-@end lisp
-
-
-As in normal @sysname {} methods (see Section 4.11), a PDDL Method's head is a
-task. We notate it here as @emph{head@sub{[φ]}} in order to indicate
-that some set of variables, φ, may appear free in the head. Similarly,
-we have @emph{precond@sub{[φ]}} and @emph{body@sub{[φ] }}to indicate
-that φ may appear free in the preconditions and the body. A PDDL
-method's preconditions must be an enhanced PDDL goal expression (see
-below). A PDDL method's body must be an ordered task network. In the
-interests of clean syntax, task network keywords (:ordered and
-:unordered) are @emph{not} optional, and must be provided. For the
-moment, only ordered task networks are supported; unordered task
-networks may be supported later.
-
-Note that provision for free variables does not relax the constraint
-that all operators must be ground when inserted into the plan. The
-intention is to allow the variables in φ to be bound by the
-preconditions. As in PDDL operators, only the variables in the head of a
-PDDL method are scoped over the preconditions and the body (in standard
-@sysname {} methods we have Prolog-style scoping where any free variable is
-implicitly scoped over the entire method).
-
-Note also that PDDL methods do @emph{not} permit multiple precondition
-sets and task networks in a single PDDL method form, and so do
-@emph{not} support the if-then-else semantics of @sysname {} method forms. To
-get this kind of semantics in PDDL methods, the programmer must supply a
-set of methods with mutually-exclusive and exhaustive preconditions.
-
-@c FIXME: Fix cross-reference.
-PDDL methods may only be used in domains that are a subclass of
-@code{SIMPLE-PDDL-DOMAIN} (see Section 8.1.2).
-@menu
-* Enhanced Preconditions::
-* PDDL Domain Classes::
-@end menu
-
-@node Enhanced Preconditions, PDDL Domain Classes, PDDL Methods, PDDL Methods
-@subsection Enhanced Preconditions
-@anchor{#enhanced-preconditions}
-PDDL method preconditions are based on PDDL @emph{goals}, but with the
-following extensions:
-
-@itemize
-@item
-A PDDL method's preconditions may use the @code{:sort-by}        keyword. More
-precisely:
-
-@end itemize
-
-@quotation
-precond ::= <PDDL goalφ>|
-
-(:sort-by <var> [<rel>] <PDDL goal@sub{<var>,φ}>
-@end quotation
-@itemize
-@item
-As noted above, variables that appear free in the head of the PDDL
-method may appear free in the precondition, hence the use of <PDDL
-goalφ> and <PDDL goal@sub{<var>,φ}>.
-
-@end itemize
-
-PDDL goals are as described in the PDDL syntax (we have used the PDDL
-2.1 paper as primary source). Note that PDDL goals with free variables
-are permitted, as long as the free variables appear in the parameters
-for the task.
-
-Currently we do not support typing in PDDL method task heads, but this
-could change.
-
-@node PDDL Domain Classes,  , Enhanced Preconditions, PDDL Methods
-@subsection PDDL Domain Classes
-@anchor{#pddl-domain-classes}
-In order to implement the requirements of PDDL, @sysname {} contains a number
-of classes, which can be used when defining domains with defdomain (see
-Section 4.12):
-
-@itemize
-@item
-SIMPLE-PDDL-DOMAIN -- this is the base class. All PDDL domain classes
-should include this class.
-
-@item
-PDDL-DOMAIN -- for historical reasons, this class corresponds roughly to
-PDDL domains with the ADL requirements. Use of this class is
-@emph{deprecated;} it was added without sufficient thought.
-
-@item
-ADL-DOMAIN -- SIMPLE-PDDL-DOMAIN with ADL-MIXIN (see below).
-
-@item
-Mixin classes for different requirements:
-
-@itemize
-@item
-NEGATIVE-PRECONDITIONS-MIXIN
-
-@item
-DISJUNCTIVE-PRECONDITIONS-MIXIN
-
-@item
-UNIVERSAL-PRECONDITIONS-MIXIN
-
-@item
-EXISTENTIAL-PRECONDITIONS-MIXIN
-
-@item
-QUANTIFIED-PRECONDITIONS-MIXIN -- this simply inherits universal and
-existential preconditions, since they are typically used together.
-
-@item
-CONDITIONAL-EFFECTS-MIXIN
-
-@item
-EQUALITY-MIXIN
-
-@item
-PDDL-TYPING-MIXIN
-
-@item
-COSTS-MIXIN
-
-@item
-ADL-MIXIN
-
-@end itemize
-
-@end itemize
-
-@node Version Differences, General Notes on SHOP3, PDDL Compatibility, Top
+@node Version Differences, General Notes on SHOP3, Internal Technical Information, Top
 @chapter Differences between SHOP 1.x, SHOP2 and @sysname {}
 The differences between @sysname {} and SHOP 1.x can be grouped in two sets:
 syntactic changes in the domain definitions and differences in
@@ -3466,7 +3515,7 @@ the views of the Defense Advanced Research Projects Agency (DARPA), the
 Department of Defense, the National Science Foundation, the University
 of Maryland, SIFT, or the United States Government.  
 
-@node References,  , Acknowledgments, Top
+@node References, Function Index, Acknowledgments, Top
 @chapter References
 @anchor{#references}
 [Dean and Boddy, 1998] T. Dean and M. Boddy. An analysis of
@@ -3483,6 +3532,35 @@ Tech report TR 4157, University of Maryland, College Park, MD, June
 [Nau @emph{et al.}, 2001] D. S. Nau, H. Muñoz-Avila Y. Cao, A. Lotem,
 and.S. Mitchell. Totally Ordered Planning with Partially Ordered
 Subtasks. In @emph{IJCAI-01}, 2001.
+
+@node Function Index, Type and Class Index, References, Top
+@unnumbered Function and Macro Index
+@printindex fn
+
+@node Type and Class Index, Variable Index, Function Index, Top
+@unnumbered Type and Class Index
+@printindex tp
+
+
+@node Variable Index, Concept Index, Type and Class Index, Top
+@unnumbered Variable Index
+@printindex vr
+
+@node Concept Index, Colophon, Variable Index, Top
+@unnumbered Concept Index
+@printindex cp
+
+@node Colophon,  , Concept Index, Top
+@comment  node-name,  next,  previous,  up
+@unnumbered Colophon
+
+This manual is maintained in Texinfo, and automatically translated
+into other forms (e.g. HTML or pdf). If you're @emph{reading} this
+manual in one of these non-Texinfo translated forms, that's fine, but
+if you want to @emph{modify} this manual, you are strongly advised to
+seek out a Texinfo version and modify that instead of modifying a
+translated version.
+
 
 @bye
 
