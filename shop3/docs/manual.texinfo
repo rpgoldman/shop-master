@@ -14,7 +14,7 @@ Attribution-ShareAlike 4.0 International Public License
 
 @titlepage
 @title SHOP3 Manual
-@author Robert P. Goldman @sup{1}, Dana Nau @sup{2}, and Contributors
+@author Robert P. Goldman@sup{1}, Dana Nau@sup{2}, and Contributors
 @sup{1} SIFT, LLC
 
 319 North First Avenue, Suite 400
@@ -55,8 +55,8 @@ altogether. - Robert P. Goldman}
 @menu
 * Introduction::
 * Execution Environment::
+* Running SHOP3:: 
 * The SHOP3 Formalism::
-* Running SHOP3::
 * Using the SHOP Theorem Prover::
 * Internal Technical Information::
 * PDDL Compatibility::
@@ -72,13 +72,13 @@ altogether. - Robert P. Goldman}
 @chapter Introduction
 @anchor{#introduction}
 This document presents the design and implementation details of @sysname,
-the Simple Hierarchical Ordered Planner. @sysname adds several extensions
+the Simple Hierarchical Ordered Planner. @sysname {} adds several extensions
 to the functionality of SHOP 1.6.1 and MSHOP 1.1.1, and adopts a
 modified domain syntax for partial compatibility with the recently
 released Java version of SHOP, which is known as JSHOP 1.0. This
 document is based, in part, on the JSHOP documentation written by Füsun
 Yaman, with additional material from Yue Cao's December 2000 draft of
-the @sysname documentation and pseudocode from [Nau @emph{et a}l., 2001].
+the @sysname {} documentation and pseudocode from [Nau @emph{et a}l., 2001].
 The entire SHOP research group shares credit for the content of this
 document, especially Professor Dana S. Nau who wrote the original
 version of SHOP and its documentation. Additional contributions were
@@ -88,7 +88,7 @@ The rest of the document is organized as follows:
 
 @itemize
 @item
-Section one provides an overview of @sysname and of the downloadable
+Section one provides an overview of @sysname {} and of the downloadable
 distribution.
 
 @end itemize
@@ -115,18 +115,18 @@ Section six presents internal technical details regarding @sysname.
 Section seven presents the Java interface for @sysname.
 
 @item
-Section eight presents the @sysname Graphical User Interface. @emph{To the
+Section eight presents the @sysname {} Graphical User Interface. @emph{To the
 best of my knowledge, this GUI is bit-rotted, as of today, and does not
 work. -- rpg 15 Jul 2007.}
 
 @item
-Sections nine and ten summarize the differences between @sysname and SHOP
+Sections nine and ten summarize the differences between @sysname {} and SHOP
 1.x and JSHOP 1.0, respectively. @emph{To the best of my knowledge,
 JSHOP is unmaintained and bit-rotted. I don't know of anyone who wishes
 to maintain it, and I do not. -- rpg 15 Jul 2007.}
 
 @item
-Section eleven presents some general remarks on the @sysname system.
+Section eleven presents some general remarks on the @sysname {} system.
 
 @item
 Sections twelve and thirteen list acknowledgements and references,
@@ -176,26 +176,26 @@ part of @uref{http://www.aic.nrl.navy.mil/hicap/,HICAP}, a
 plan-authoring system for complex military operations.
 
 @item
-@sysname incorporates many features from
+@sysname {} incorporates many features from
 @uref{http://www.dur.ac.uk/d.p.long/IPC/pddl.html,PDDL}, e.g., support
 for quantifiers and conditional effects in methods and operators.
 
 @item
-@sysname allows the combination of partially ordered and fully ordered
+@sysname {} allows the combination of partially ordered and fully ordered
 tasks through the use of the :unordered and :ordered keywords.
 
 @item
-@sysname allows branch-and-bound optimization of plan costs. For small
+@sysname {} allows branch-and-bound optimization of plan costs. For small
 problems, this capability can be used to find the absolute minimum cost
 plans. For larger problems, this capability can be used with time limits
 to get the lowest cost plan that is found within the given time limit.
 
 @end itemize
 
-@node Execution Environment, The SHOP3 Formalism, Introduction, Top
+@node Execution Environment, Running SHOP3, Introduction, Top
 @chapter Execution Environment
 @anchor{#execution-environment}
-@sysname is written in Common Lisp. To be able to run @sysname, you will need
+@sysname {} is written in Common Lisp. To be able to run @sysname, you will need
 to have Common Lisp installed on your computer. We have run @sysname
 successfully under the following implementations of Common Lisp, and we
 would be interested in hearing your reports about other implementations:
@@ -215,21 +215,21 @@ Clozure Common Lisp, version 1.11 on Mac OS X and Linux.
 
 @end itemize
 
-We suspect that there may be some difficulties in running @sysname on
+We suspect that there may be some difficulties in running @sysname {} on
 Windows; most of these have to do with getting the ASDF system
-definitions to work on Windows, not with @sysname proper. Please contact us
+definitions to work on Windows, not with @sysname {} proper. Please contact us
 if you encounter difficulties. We welcome reports of experiences with
 other platforms and CL implementations, and will attempt to support
-users who wish to bring @sysname up on other combinations.
+users who wish to bring @sysname {} up on other combinations.
 
-Note that @sysname is known @strong{not} to work with Embeddable Common
+Note that @sysname {} is known @strong{not} to work with Embeddable Common
 Lisp (ECL).
 
-@sysname is distributed with a system definition written using the
+@sysname {} is distributed with a system definition written using the
 open-source ASDF system definition facility (for more information, see
 @url{http://common-lisp.net/projects/asdf/}). You should insure that all of the .asd
-files in the @sysname distribution can be found by ASDF, per the
-instructions given with ASDF, and then @sysname should load without any
+files in the @sysname {} distribution can be found by ASDF, per the
+instructions given with ASDF, and then @sysname {} should load without any
 problems. See Section 5.1 for more details about how to load @sysname.
 All of the CL implementations we know of ship with ASDF pre-installed.
 To enable it you may have to
@@ -271,9 +271,525 @@ To enable it you may have to
 @c @emph{C@sub{2}} [@emph{name@sub{3}}] @emph{C@sub{3}} ...
 @c [@emph{name@sub{n}}] @emph{C@sub{n}})”
 
-@node The SHOP3 Formalism, Running SHOP3, Execution Environment, Top
+@node Running SHOP3, The SHOP3 Formalism, Execution Environment, Top
+@chapter Running @sysname {}
+The latest version of @sysname {} is loaded by using the ASDF system
+definition facility. The first of the following subsections explains how
+to use ASDF to load @sysname. Note that previous methods of starting @sysname,
+by hand-coded load files, and mk:defsystem, are no longer supported.
+There are two ways to execute the @sysname {} planning process: find-plans,
+which finds plans for a single planning problem, and do-problems, which
+finds plans for a planning problem set. Subsection 5.2 describes the use
+of these functions. Subsection 5.3 describes the functions shop-trace
+and shop-untrace, which are the primary mechanisms for debugging @sysname
+domain descriptions and problem specifications. Subsection 5.4 describes
+some additional features that may also be useful for debugging domain
+descriptions and problems for @sysname. Finally, subsection 5.5 describes
+some hook routines that can be used to customize the behavior of @sysname.
+@menu
+* Loading the Planner::
+* Executing the Planner::
+* Tracing::
+* Other Debugging Features::
+* Syntax Checks::
+* Debugging Suggestions::
+* Hook Routines::
+@end menu
+
+@node Loading the Planner, Executing the Planner, Running SHOP3, Running SHOP3
+@section Loading the Planner
+@anchor{#loading-the-planner}
+The @sysname {} planner should be loaded into your lisp environment using
+ASDF. Assuming that ASDF is properly installed, and the @sysname.asd system
+definition file can be found by ASDF,, the following command should get
+the system loaded:
+
+@lisp
+(asdf:load-system )
+@end lisp
+
+@sysname {} is defined in the @sysname {} package (and uses the @sysname.theorem-prover
+package). The easiest way to use the system for experimentation will be
+to change to the predefined @code{:SHOP-USER} package and work in there:
+
+@lisp
+(in-package :SHOP-USER)
+@end lisp
+
+
+If you are working on a larger or more ambitious project, it will be
+more appropriate for you to work in a package of your own definition,
+which should, at least, :use the @sysname {} and common-lisp packages.
+
+@node Executing the Planner, Tracing, Loading the Planner, Running SHOP3
+@section Executing the Planner
+@anchor{#executing-the-planner}
+The find-plans function has one mandatory argument, the name of a
+planning problem, and a set of optional keyword arguments. It returns up
+to four values. Find-plans will always return two values: (1) a list of
+plans and (2) the total amount of CPU time used during planning (in
+seconds). If the :plan-tree argument (see below) is non-NIL, then two
+additional values will be returned: (3) a list of plan tree data
+structures and (4) a list of final state data structures. From the plan
+state data structures, the user can extract full state trajectories for
+the plans.
+
+The do-problems function has one mandatory argument, which can either be
+the name of a planning problem set or a list of names of planning
+problems. It executes find-plans on each of the given planning problems
+and returns nil. Both of these functions use the same keyword arguments.
+
+The keyword arguments to find-plans and do-problems are as follows:
+
+@itemize
+@item
+@emph{which} says what kind of search to do. Here are its possible
+values and what they mean. The default value of @emph{which} is the
+value of the global variable @code{*which*} (whose default value is @code{:first}).
+
+@multitable {:all-shallowest} {Depth-first search for the shallowest plan or the first such} 
+@item 
+@strong{Value }
+ @tab @strong{Kind of search }
+@item 
+:first
+ @tab Depth first search, stopping at the first plan found
+@item 
+:all
+ @tab Depth-first search, but don't stop until all plans in
+ @i{plans(S, T, M)} have been found
+@item 
+:shallowest
+ @tab Depth-first search for the shallowest plan (or the first such plan
+if there is more than one of them). In many domains, this is also the
+least-cost plan
+@item 
+:all-shallowest
+ @tab Depth-first search for all shallowest plans in the search space
+@item 
+:id-first
+ @tab Iterative-deepening search, stopping after the first plan found
+@item 
+:id-all
+ @tab Iterative-deepening search for all shallowest plans
+@end multitable
+
+The :id-all and :id-first options are equivalent to taking a modified
+version of find-plans that backtracks each time it reaches depth
+@emph{d}, and calling it repeatedly with @emph{d} = 1, 2, ..., until a
+plan is found.
+
+@item
+@emph{verbose} says what information to print out, as shown in the
+following table. The default value for @emph{verbose} is 1.
+
+@multitable {3 or :long-plans} {The statistics plus a succinct version of each plan found} 
+@item 
+@strong{Value }
+ @tab @strong{What to print }
+@item 
+0 or nil
+ @tab Nothing
+@item 
+1 or :stats
+ @tab Some statistics about the search
+@item 
+2 or :plans
+ @tab The statistics plus a succinct version of each plan found
+(internal operators and operator costs are omitted).
+@item 
+3 or :long-plans
+ @tab The statistics plus the complete version of each plan found
+@end multitable
+
+@item
+@emph{If gc} is non-nil, then find-plans calls the garbage collector
+just before starting its search, thus making it somewhat easier to get
+repeatable experimental results. Note that this feature of @sysname {} is only
+supported under Macintosh Common Lisp and Allegro Common Lisp; in all
+other Lisp implementations the value for this keyword is ignored. The
+default value of gc is @emph{t.}
+
+@item
+If @emph{pp} is non-nil, then all printing done by @sysname {} is performed
+using the Common Lisp pretty-printing mechanism. This typically leads to
+more easily read output. The default value of @emph{pp} is t.
+
+@item
+The @emph{state} argument controls how states are represented
+internally. @sysname {} can have different performance characteristics
+depending on the value provided to this augment. If you are encountering
+out-of-memory errors in @sysname {} or you want to get the maximum speed
+possible from @sysname {} for a particular set of problems, you may wish to
+experiment with different values for this argument. The default value is
+:mixed, which represents states using a combination of lists and hash
+tables; this value has been shown to provide a reasonably good
+combination of speed and memory usage on a variety of test problems. The
+other values are :list, :hash, and :bit.
+
+@item
+The @emph{optimize-cost} argument is used to perform planning with
+branch-and-bound optimization of the total plan cost. The default value
+for this argument is nil. If the value of this argument is nil, the
+optimization feature is disabled. If the value of the argument is t,
+@sysname {} will search for plans with the minimum total cost. If the value of
+the argument is a number, @sysname {} will use the branch-and-bound technique
+to search for plans with cost less than or equal to the value of the
+argument. The optimization feature is written under the assumption that
+the costs of operators are always non-negative. If this assumption is
+invalid, @sysname {} will produce unreliable results (specifically it will
+prune out some valid plans). The interaction of :optimize-cost with the
+various options for :which can be subtle. Below are notes on each
+possible combination:
+
+@item @code{(:which :first :optimize-cost t)}
+
+Under these arguments, @sysname {} returns the first plan found for which no
+other valid plan has a lower total cost. Note that this option may take
+much more time to run than using (:which :first :optimize-cost nil)
+since even after it finds the plan, it must keep searching to see if it
+can find a cheaper plan. However, this option may be significantly
+faster than @code{(:which :all :optimize-cost nil)} since the branch-and-bound
+mechanism will prune out non-optimal plans without having to consider
+them all the way to the end. In some cases, this will mean that (:which
+:first :optimize-cost t) terminates and (:which :all :optimize-cost nil)
+does not.
+
+@item
+@code{(:which :first :optimize-cost @emph{number})}
+
+Under these arguments, @sysname {} returns the first plan found whose total
+cost is less than or equal to the number given. If there is no plan
+whose total cost is less than or equal to that number, @sysname {} will return
+no plans. Note that if the number given is large enough, these arguments
+can produce results much more quickly than with (:which :first
+:optimize-cost t); specifically, as soon as @sysname {} finds a plan for which
+the cost is met, it can terminate and does not have to keep searching
+for cheaper plans.
+
+@item
+@code{(:which :all :optimize-cost t)}
+
+Under these arguments, @sysname {} returns all plans for which no other valid
+plan has a lower total cost. Obviously, all plans returned under these
+options will have equal total cost.
+
+@item
+@code{(:which :all :optimize-cost @emph{number})}
+
+Under these arguments, @sysname {} returns all plans with total cost less than
+or equal to the given number.
+
+@item
+@code{(:which :shallowest :optimize-cost t)}
+
+Under these arguments, @sysname {} returns a plan that has the shallowest
+depth of all valid plans and for which there is no other shallowest
+depth valid plan which has a lower total cost. In other words, these
+arguments produce the cheapest of all shallowest plans (which,
+incidentally, is not necessarily the same thing as the shallowest of all
+cheapest plans).
+
+@item
+@code{(:which :shallowest :optimize-cost @emph{number})}
+
+Under these arguments, @sysname {} returns a plan which has the shallowest
+depth of all valid plans and whose total cost is less than or equal to
+the given number. Note that if there is no plan whose cost is less than
+or equal to the number and whose depth is shallowest among all valid
+plans, then no plan will be returned (even if there are deeper plans
+which do have cost less than or equal to the number).
+
+@item
+@code{(:which :all-shallowest :optimize-cost t)}
+
+Under these arguments, @sysname {} returns all plans which have the shallowest
+depth of all valid plans and for which there is no other shallowest
+depth valid plan which has a lower total cost.
+
+@item
+@code{(:which :all-shallowest :optimize-cost @emph{number})}
+
+Under these arguments, @sysname {} returns all plans which have the shallowest
+depth and whose total cost is less than or equal to the given number.
+
+@item
+@code{(:which :id-first)} or @code{(:which :id-all)}
+
+The @emph{id-first} and @emph{id-all} arguments produce the same results
+as the @emph{shallowest} and @emph{all-shallowest} arguments,
+respectively for each different combination with :optimize-cost. Note,
+however, that there are domains for which @sysname {} will terminate using
+@emph{id-first} and @emph{id-all} and will not terminate using other
+values for :which.
+
+@item
+The @emph{time-limit} argument may either nil or a number. Its default
+is nil and if it is nil, no time limit is imposed on the planning
+process. If the @emph{time-limit} argument is a number, @sysname {} will check
+the elapsed CPU time at the start of each step of the planning process,
+and if the number of seconds elapsed is greater than the argument value,
+@sysname {} will immediately terminate. The main use for this feature is in
+combination with (:optimize-cost t) argument, in order to return the
+optimal value found within the given time limit. For example, consider
+the call (find-plans 'foo :verbose 1 :optimize-cost t :time-limit 120).
+This call addresses a problem named @emph{foo}, and runs until it either
+finds the minimum cost plan or until 2 minutes have elapsed. It then
+returns the lowest cost plan that it found during that time. This
+functionality is inspired, in part, by Anytime Algorithms [Dean and
+Boddy, 1998].
+
+@item
+If @emph{explanation} is non-nil, @sysname {} adds extra information at the
+end of each operator explaining how the preconditions for that operator
+were satisfied. Currently supports only logical atoms, and, and or; it
+doesn't work with forall, not, eval, etc. If this feature is used with
+the external-access-hook feature (see Section 5.4), any attribution
+information provided by the external-access-hook routine is included in
+the relevant explanation. The default value of @emph{explanation} is
+nil.
+
+@item
+The @emph{plan-tree} argument defaults to nil; if true, the planner will
+return two additional values: (1) a list of complete task decomposition
+trees for the plans and (2) a list of plan state data structures
+corresponding to the final states of each plan. Plan trees are encoded
+in a nested list format in which the decomposition of an upper level
+task into lower level tasks is represented by the upper level task atom,
+followed by trees for each lower level task. The leaves of the tree,
+involving operators, are each lists of three elements: the cost of the
+operator, the task atom for the operator, and the numerical position of
+the operator in the plan (staring at 1). For example, a task (travel
+houston springfield) that was directly decomposed into operators, (!fly
+houston boston) with cost 200 and (!drive boston springfield) with cost
+50, would have the following plan tree:
+
+@lisp
+((travel houston springfield)
+ (200 (!fly houston boston) 1)
+ (50 (!drive boston springfield) 2))
+@end lisp
+
+@end itemize
+
+
+@node Tracing, Other Debugging Features, Executing the Planner, Running SHOP3
+@section Tracing
+@anchor{#tracing}
+There are two functions used for controlling the tracing mechanism in
+@sysname: shop-trace and shop-untrace. These are similar to Lisp's trace
+and untrace functions. Once they have been invoked, subsequent calls to
+find-plans or do-problems will print out information about elements of
+the domain for which tracing is enabled whenever those elements are
+encountered. More specifically:
+
+@itemize
+@item
+@lisp
+(shop-trace @var{item})
+@end lisp
+will turn on tracing for @var{item}, which may be any
+of the following:
+@itemize
+@item
+a method, axiom, operator, task, or goal;
+@item
+one of the keywords @code{:methods}, @code{:axioms}, @code{:operators}, @code{:tasks}, @code{:goals}, or
+@code{:protections} in which case @sysname {} will trace @emph{all} items of that type
+(@code{:goals} refers to predicates that are goals for the theorem-prover, and
+@code{:protections} refers to predicates used as arguments of @code{:protection} in
+operators);
+@item
+the keyword @code{:states}, in which case @sysname {} will include the current state
+whenever it prints out a tracing message
+@item
+the keyword @code{:plans} in which case @sysname {} will print diagnostic information
+whenever it has found a plan (and may be considering whether or not to
+keep the plan, depending on the :which and :optimize arguments of
+seek-plans).
+@item
+The keyword @code{:all}, which will trace all available items, currently
+methods, axioms, operators, tasks, goals and protections.
+@end itemize
+
+@item 
+@code{(shop-trace @emph{item1 item2} ...)}
+ will do the same for a list of items
+@item
+@code{(shop-trace)} will print a list of what's currently being traced
+@item
+@code{(shop-untrace @emph{item})} will turn off tracing for an item
+@item
+@code{(shop-untrace @emph{item1 item2} ...)} will turn off tracing for a list
+of items
+@item
+@code{(shop-untrace)} will turn off tracing for all items
+@end itemize
+
+@node Other Debugging Features, Syntax Checks, Tracing, Running SHOP3
+@section Other Debugging Features
+@anchor{#other-debugging-features}
+There are three variables, namely *current-state*, *current-plan*, and
+*current-tasks*, in @sysname. These variables can be used to monitor the
+current status of the state, current plan and the list of current tasks
+to be accomplished respectively. Since these are the internal variables
+of the @sysname {} planning system, the following functions are defined to
+access the current contents of those variables: @code{print-current-state},
+@code{print-current-plan}, and @code{print-current-tasks}, respectively. Note that
+these are Lisp functions that must be called by using the Lisp
+evaluator. The best way to use these functions is to define dedicated
+methods in the domain that invoke the functions using eval or call
+expressions in their predicates. Those methods can then be used in the
+problem definition where debugging output is needed. For example, the
+following methods can be included in any domain description for this
+purpose:
+
+@lisp
+(:method (print-current-state)
+    ((eval (print-current-state)))
+    ())
+
+(:method (print-current-tasks)
+   ((eval (print-current-tasks)))
+   ())
+
+(:method (print-current-plan)
+    ((eval (print-current-plan)))
+    ())
+@end lisp
+
+
+And these special purpose methods can be used in the task decompositions
+of other methods for debugging purposes. For example,
+
+@lisp
+(:method
+    (do-both ?x ?y)
+    nil
+    (:ordered
+      (:task !do ?y)
+      (:task print-current-state)
+      (:task !do ?x))))
+@end lisp
+
+There is now a new variable, @var{*break-on-backtrack*}, that will cause the
+Lisp environment to throw into a break loop when @sysname {} backtracks.
+
+@node Syntax Checks, Debugging Suggestions, Other Debugging Features, Running SHOP3
+@section Syntax Checks
+@anchor{#syntax-checks}
+We have adopted for @sysname {} the “singleton variable” check common in
+Prolog implementations. Logic variables are used to express unification
+constraints on expressions. In practice, a singleton logical variable in
+a @sysname {} expression (a method, operator, or axiom definition) is often a
+typographical error. Accordingly, @sysname {} will issue a warning when it
+encounters a logical variable used only once. If the single use is
+correct, the proper (and nicely self-documenting) way to disable this
+warning is to use an @emph{anonymous variable} (see page 7).
+
+@node Debugging Suggestions, Hook Routines, Syntax Checks, Running SHOP3
+@section Debugging Suggestions
+@anchor{#debugging-suggestions}
+When you have a problem that does not solve as expected, the following
+general recipe may help you home in on bugs in your domain definition:
+
+@enumerate 
+@item
+Start by doingo@code{(SHOP-TRACE :TASKS)} and then try @code{FIND-PLANS} again.
+
+@item
+In many cases, the domain will be written so that there will be little
+or no backtracking. In this case, examine the output of the traced call
+to @code{FIND-PLANS} and look for the first backtracking point.
+
+@item
+The above process should help you identify a particular task, either a
+primitive or a complex task, as a likely problem spot. If it's a
+primitive task, the next step is to examine the operator definition. If
+it's a complex task, you should check the method definitions. If you
+have any trouble identifying which method definition is relevant, you
+can use @code{(SHOP-TRACE :METHODS)} to further focus your attention.
+
+@item
+If visual inspection of method and operator definitions does not reveal
+the problem, you most likely have problems with precondition
+expressions. In this case, try using @code{(SHOP-TRACE :GOALS)}, rerunning
+@code{FIND-PLANS} and check to see what's happened when your problematic method or
+operator's preconditions are checked.
+
+@end enumerate
+
+This recipe has proven effective for finding the vast majority of bugs
+in @sysname {} domains.
+
+@node Hook Routines,  , Debugging Suggestions, Running SHOP3
+@section Hook Routines
+@anchor{#hook-routines}
+@sysname {} recognizes several different hook routines. These are Lisp
+routines that may be defined by the user; if they are defined, they are
+invoked under specific circumstances. Hook routines are typically used
+when embedding @sysname {} in an application; they allow such an application
+to obtain additional information from @sysname {} or to affect it's behavior.
+There are three hooks that are recognized by @sysname:
+
+@itemize
+@item
+@code{(plan-found-hook state which plan cost depth)}
+If this routine is defined, @sysname {} invokes it whenever it finds a plan.
+It can be useful for displaying and/or recording details about the plan.
+The arguments are the current state, the value for the :which argument
+that was provided to the planner, the plan, the cost of the plan, and
+the search depth at which the plan was found.
+@item
+@code{(trace-query-hook type item additional-information state-atoms)}
+If this routine is defined, @sysname {} invokes it whenever it invokes the
+@c FIXME: fix cross-reference
+tracing mechanism (See Section 5.2). The arguments include the type of
+item being traced (e.g., @code{:task}, @code{:method}), the item, the list of Lisp
+values that are printed by the tracing mechanism, and a list of logical
+atoms in the current state.
+@item
+@code{(external-access-hook query)}
+This hook routine is intended to allow @sysname {} to use an external source
+(such as a database) to determine the applicability of methods and
+operators. To use this hook routine, a domain must include one or more
+logical expressions that have the keyword :external as the first symbol.
+Such expressions must only involve a single logical atom, or a single
+conjunction of logical atoms. When @sysname {} attempts to find a binding that
+satisfies such an expression, it will first invoke external-access-hook
+to satisfy the expression; if that routine is undefined or returns nil,
+@sysname {} will then try to satisfy the expression using its internal
+knowledge state. The argument to external-access-hook is a list of the
+form @code{'(and (@var{pred} @var{val} @var{val})...)}. It returns a list of responses,
+each of which is a list of two elements: an attribution and a list of
+bindings for the unbound variables in the query. The attribution is
+stored for use with the @emph{explanation} option for the planning
+@c FIXME -- redo cross-reference
+system (See Section 5.1). For example, consider a method that has the
+following precondition:
+
+@lisp
+(or (and (clear ?b1)
+             (clear ?b2)
+             (clear ?b3))
+     (:external and (on ?b1 ?b2) (on ?b2 ?b3)))
+@end lisp
+
+When this precondition is encountered and external-access-hook is
+defined, @sysname {} invokes that routine with the argument @code{'(and (on ?b1 ?b2)
+(on ?b2 ?b3))}. The routine might (for example) return the list:
+
+@lisp
+'((database-123 ((?b1 block10) (?b2 block 11) (?b3 block 12)))
+  (database-223 ((?b1 block20) (?b2 block 21) (?b3 block 22))))
+@end lisp
+@end itemize
+
+
+
+@node The SHOP3 Formalism, Using the SHOP Theorem Prover, Running SHOP3, Top
 @chapter The @sysname {} Formalism
-The inputs to @sysname are a @emph{planning domain} and either a single
+The inputs to @sysname {} are a @emph{planning domain} and either a single
 @emph{planning problem} or a @emph{planning problem set}. Planning
 domains are composed of @emph{operators}, @emph{methods}, and
 @emph{axioms}. Planning problems are composed of @emph{logical atoms}
@@ -317,7 +833,7 @@ because methods contain logical expressions.
 In the structures defined below, there are five kinds of symbols:
 @strong{variable symbols}, @strong{constant symbols}, @strong{function
 symbols}, @strong{primitive task symbols}, and @strong{compound task
-symbols}. To distinguish among these symbols, SHOP and @sysname both use
+symbols}. To distinguish among these symbols, SHOP and @sysname {} both use
 the following conventions:
 
 @itemize
@@ -351,10 +867,10 @@ Any of the structures defined in the remaining sections are said to be
 @node General Lisp Expressions, Terms, Symbols, The SHOP3 Formalism
 @section General Lisp Expressions
 @anchor{#general-lisp-expressions}
-A number of @sysname domain structures described in this section use
+A number of @sysname {} domain structures described in this section use
 @strong{general Lisp expressions}. These are arbitrary pieces of Lisp
 code which can include functions, macros, special macro symbols (e.g.,
-backquote), etc. When @sysname needs to get the value of a general Lisp
+backquote), etc. When @sysname {} needs to get the value of a general Lisp
 expression, it first substitutes values for any variable symbols in the
 expression that are bound. Then it sends the entire expression into the
 Lisp evaluator to get a final value.
@@ -464,9 +980,9 @@ A @strong{call-term} is an expression of the form
 @end lisp
 where @emph{f} is a function symbol and each @emph{t@sub{i}} is a term
 or a call-term. A call-term has a special meaning to @sysname, because it
-tells @sysname that @emph{f} is an attached procedure, i.e., that whenever
-@sysname needs to evaluate a precondition or task list that contains a
-call-term, @sysname should replace the call term with the result of
+tells @sysname {} that @emph{f} is an attached procedure, i.e., that whenever
+@sysname {} needs to evaluate a precondition or task list that contains a
+call-term, @sysname {} should replace the call term with the result of
 applying the function @emph{f} on the arguments @emph{t@sub{1},
 t@sub{2}, @dots{}, t@sub{n}}. (We later will define what preconditions
 and task lists are).
@@ -479,8 +995,8 @@ For example, the following call-term would have the value 6:
 Note that a call-term is not as expressive as an eval-term. In
 particular, it does not support the evaluation of Lisp macros (including
 macro characters such as backquote). Both call and eval are supported in
-@sysname because the former is compatible with JSHOP 1.0 and the latter is
-compatible with SHOP 1.x. @sysname users who are not interested in either
+@sysname {} because the former is compatible with JSHOP 1.0 and the latter is
+compatible with SHOP 1.x. @sysname {} users who are not interested in either
 form of compatibility may use either form.
 
 @node Logical Atoms , Logical Expressions, Terms, The SHOP3 Formalism
@@ -606,7 +1122,7 @@ expression will bind the variable ?baz to the list (IF FISH):
 Similarly, if ?foo is bound to LIST and ?bar is bound to 4 then the
 expression above will bind ?baz to the list (NIL (LIST FISH) 2).
 
-@sysname also offers a @strong{compound assignment} expression of this
+@sysname {} also offers a @strong{compound assignment} expression of this
 form:
 
 @lisp
@@ -701,7 +1217,7 @@ A @strong{first satisfier precondition} has the form
 (:first @emph{l@sub{1} l@sub{2} ... l@sub{n}})
 @end lisp
 where each @emph{l@sub{i }} is a logical expression. Such a precondition
-causes @sysname to consider only the first set of bindings that satisfies
+causes @sysname {} to consider only the first set of bindings that satisfies
 all of the given expressions. Alternative bindings will not be
 considered even if the first bindings found do not lead to a valid plan.
 
@@ -715,7 +1231,7 @@ A @strong{sorted precondition} has the form
 @end lisp
 where @emph{?v} is a variable symbol, @emph{e} is a general Lisp
 expression (which should evaluate to a comparison function), and
-@emph{l} is a logical expression. Such a precondition causes @sysname to
+@emph{l} is a logical expression. Such a precondition causes @sysname {} to
 consider bindings for the precondition in a specific order.
 Specifically, bindings are sorted such that if the specified comparison
 function holds between values @emph{x} and @emph{y} then bindings that
@@ -727,7 +1243,7 @@ bind @emph{?v} to @emph{x} may not occur after bindings that bind
 @end lisp
 
 
-This precondition will cause @sysname to consider bindings in decreasing
+This precondition will cause @sysname {} to consider bindings in decreasing
 (high to low) order of the value of @emph{?d}. If the comparison
 function (@emph{e}) is omitted, it defaults to #'<, indicating
 increasing (low to high) order.
@@ -813,11 +1329,11 @@ A task atom, see 4.8.
 
 @end itemize
 
-The :ordered keyword, which is optional, specifies that @sysname must
+The :ordered keyword, which is optional, specifies that @sysname {} must
 perform the task lists in the order that they are given.@ The :unordered
 keyword specifies that there is no particular ordering specified between
 @emph{tasklist@sub{1}, tasklist@sub{2} ... tasklist@sub{n}.@ } With the
-use of the :unordered keyword, @sysname may interleave tasks between
+use of the :unordered keyword, @sysname {} may interleave tasks between
 different task lists.@  Suppose we have two task lists as the following:
 
 @emph{T} = @code{(:ordered @emph{t}@sub{1} @emph{t}@sub{2} ...
@@ -833,11 +1349,11 @@ and that we have the main task list
 If none of the tasks have the @code{:immediate} keyword, then the tasks in
 @emph{T} should be performed in the order given, and the tasks in
 @emph{U} should also be performed in the order given---but it is
-permissible for @sysname to interleave the tasks of @emph{T} and the tasks
+permissible for @sysname {} to interleave the tasks of @emph{T} and the tasks
 of @emph{U}. However, if some of the tasks are immediate, then each time
-@sysname chooses the next task to accomplish, it needs to give a higher
+@sysname {} chooses the next task to accomplish, it needs to give a higher
 priority to the immediate tasks. For example, if @emph{t}@sub{1} is
-immediate and @emph{u}@sub{1} is not immediate, then @sysname should
+immediate and @emph{u}@sub{1} is not immediate, then @sysname {} should
 perform @emph{t}@sub{1} before both @emph{t}@sub{2} and @emph{u}@sub{1}.
 
 Note: A task with the @code{:immediate} keyword specifies that this task must
@@ -901,7 +1417,7 @@ that has the same form as D.
 
 @end itemize
 
-For backwards compatibility with SHOP 1.x, @sysname will also accept
+For backwards compatibility with SHOP 1.x, @sysname {} will also accept
 operators where the precondition @emph{P} is missing. In this case the
 domain definition pre-processing code puts a null precondition into the
 operator, which is always satisfied. @emph{@sysname's ability to recognize
@@ -917,7 +1433,7 @@ expression of the form
 
 
 where @emph{a} is a logical atom. The purpose of a protection condition
-in the add list is to tell @sysname that it should not execute any operator
+in the add list is to tell @sysname {} that it should not execute any operator
 that deletes @emph{a}. The purpose of a protection condition in the
 delete list is to cancel a previously added protection condition. For
 example, if we drive a delivery truck to a certain location in order to
@@ -948,13 +1464,13 @@ process and are not intended to correspond to actions performed in the
 plan (e.g., to do some computation which will later be useful in
 deciding what actions to perform). Other than requiring two exclamation
 points at the start of the name, the syntax for internal operators is
-identical to the syntax for other operators. @sysname handles internal
+identical to the syntax for other operators. @sysname {} handles internal
 operators exactly the same way as ordinary operators during planning.
-@sysname includes these operators in any plans that it returns at the end
+@sysname {} includes these operators in any plans that it returns at the end
 of execution. It may, however, omit them from the printout of the final
 plan (depending on the value of the :verbose argument described in
 Section 5.1). The primary reason that the internal operator syntax
-exists in @sysname is so that automated systems which use @sysname plans as an
+exists in @sysname {} is so that automated systems which use @sysname {} plans as an
 input can easily distinguish between those operators which involve
 action and those which were merely internal to the planning process.
 
@@ -965,12 +1481,12 @@ in the head of the operator (by the method that invokes the associated
 primitive task) or in the precondition of the operator. An operator
 should be written such that for any variable appearing after the
 precondition, no two unifiers of the precondition have different
-bindings for that variable. @sysname does not check this requirement; if
+bindings for that variable. @sysname {} does not check this requirement; if
 conflicting unifiers are available when applying an operator, it will
 apply one arbitrarily. This can lead to unpredictable behavior and plans
 with ambiguous semantics. In general, we recommend that operator
 preconditions be designed such that only one unifier is possible.
-However, @sysname will be able to correctly process operators that have
+However, @sysname {} will be able to correctly process operators that have
 multiple unifiers for preconditions as long as no two unifiers can
 provide different values for a variable that appears in the add list,
 delete list, or cost.
@@ -985,10 +1501,10 @@ In practice, we have found that operator definitions are prone to
 hard-to-detect syntax errors that can give rise to difficult to identify
 “garbage in/garbage out” bugs. Particularly prevalent are
 hard-to-identify bugs arising when a programmer inadvertently reverses
-the order of add and delete lists in a @sysname operator. These problems
+the order of add and delete lists in a @sysname {} operator. These problems
 are exacerbated by the extreme permissiveness of @sysname's parser.
 Accordingly, we provide an alternative syntax based on keyword
-arguments, instead. The new @sysname operators are written in this form:
+arguments, instead. The new @sysname {} operators are written in this form:
 
 @lisp
 (:op @emph{head}
@@ -1111,7 +1627,7 @@ are left in the syntax for backward compatibility.
 @node Extended form, Inclusion directives, Simple Form, Planning Domain
 @subsection Extended form
 @anchor{#extended-form}
-The extended form of the @sysname domain definition looks like this:
+The extended form of the @sysname {} domain definition looks like this:
 
 (defdomain (@emph{domain-name} &rest @emph{args}) (@emph{i@sub{1}}
 @emph{i@sub{2}} ... @emph{i@sub{n}}))
@@ -1121,7 +1637,7 @@ The extended form of the @sysname domain definition looks like this:
 @itemize
 @item
 a :type keyword argument, allowing the domain modeler to indicate a
-specific subclass of the @sysname domain class. E.g., one might have
+specific subclass of the @sysname {} domain class. E.g., one might have
 (my-domain :type pddl-domain).
 
 @item
@@ -1148,12 +1664,12 @@ The question of which additional arguments are accepted in @emph{args}
 is a matter for the implementer of the specialized domain type being
 used. Any additional arguments will be passed to the make-instance
 method for the domain class.@footnote{If you don't know what this means,
-you may safely ignore it.} @sysname extenders can create new subclasses of
+you may safely ignore it.} @sysname {} extenders can create new subclasses of
 domain that accept initialization arguments. A first example of the use
 of this is the built-in pddl-domain class.
 
 If you are using the extended form of defdomain, you should have in hand
-a new @sysname domain subclass, with a description of its arguments. If you
+a new @sysname {} domain subclass, with a description of its arguments. If you
 do not, you should ignore the extended form.
 
 @node Inclusion directives,  , Extended form, Planning Domain
@@ -1210,7 +1726,7 @@ of a planning problem.
 @section  Plans
 @anchor{#plans}
 The previous subsections describe the inputs to @sysname. This subsection
-describes the result that @sysname produces. A @strong{plan} is a list of
+describes the result that @sysname {} produces. A @strong{plan} is a list of
 the form
 
 @emph{(h@sub{1} c@sub{1} h@sub{2} c@sub{2} ... h@sub{n} c@sub{n} )}
@@ -1225,593 +1741,28 @@ order given. The @strong{cost} of the plan @emph{p} is @emph{c@sub{1 }}+
 @emph{c@sub{2 }}+ ... + @emph{c@sub{n}} (thus, the cost of the empty
 plan is 0).
 
-@node Running SHOP3, Using the SHOP Theorem Prover, The SHOP3 Formalism, Top
-@chapter Running @sysname {}
-The latest version of @sysname is loaded by using the ASDF system
-definition facility. The first of the following subsections explains how
-to use ASDF to load @sysname. Note that previous methods of starting @sysname,
-by hand-coded load files, and mk:defsystem, are no longer supported.
-There are two ways to execute the @sysname planning process: find-plans,
-which finds plans for a single planning problem, and do-problems, which
-finds plans for a planning problem set. Subsection 5.2 describes the use
-of these functions. Subsection 5.3 describes the functions shop-trace
-and shop-untrace, which are the primary mechanisms for debugging @sysname
-domain descriptions and problem specifications. Subsection 5.4 describes
-some additional features that may also be useful for debugging domain
-descriptions and problems for @sysname. Finally, subsection 5.5 describes
-some hook routines that can be used to customize the behavior of @sysname.
-@menu
-* Loading the Planner::
-* Executing the Planner::
-* Tracing::
-* Other Debugging Features::
-* Syntax Checks::
-* Debugging Suggestions::
-* Hook Routines::
-@end menu
 
-@node Loading the Planner, Executing the Planner, Running SHOP3, Running SHOP3
-@section Loading the Planner
-@anchor{#loading-the-planner}
-The @sysname planner should be loaded into your lisp environment using
-ASDF. Assuming that ASDF is properly installed, and the @sysname.asd system
-definition file can be found by ASDF,, the following command should get
-the system loaded:
-
-@lisp
-(asdf:load-system )
-@end lisp
-
-@sysname is defined in the @sysname package (and uses the @sysname.theorem-prover
-package). The easiest way to use the system for experimentation will be
-to change to the predefined @code{:SHOP-USER} package and work in there:
-
-@lisp
-(in-package :SHOP-USER)
-@end lisp
-
-
-If you are working on a larger or more ambitious project, it will be
-more appropriate for you to work in a package of your own definition,
-which should, at least, :use the @sysname and common-lisp packages.
-
-@node Executing the Planner, Tracing, Loading the Planner, Running SHOP3
-@section Executing the Planner
-@anchor{#executing-the-planner}
-The find-plans function has one mandatory argument, the name of a
-planning problem, and a set of optional keyword arguments. It returns up
-to four values. Find-plans will always return two values: (1) a list of
-plans and (2) the total amount of CPU time used during planning (in
-seconds). If the :plan-tree argument (see below) is non-NIL, then two
-additional values will be returned: (3) a list of plan tree data
-structures and (4) a list of final state data structures. From the plan
-state data structures, the user can extract full state trajectories for
-the plans.
-
-The do-problems function has one mandatory argument, which can either be
-the name of a planning problem set or a list of names of planning
-problems. It executes find-plans on each of the given planning problems
-and returns nil. Both of these functions use the same keyword arguments.
-
-The keyword arguments to find-plans and do-problems are as follows:
-
-@itemize
-@item
-@emph{which} says what kind of search to do. Here are its possible
-values and what they mean. The default value of @emph{which} is the
-value of the global variable *which* (whose default value is :first).
-
-@end itemize
-
-@multitable {:all-shallowest} {Depth-first search for the shallowest plan (or the first such plan if there is more than one of them). In many domains, this is also the least-cost plan} 
-@item 
-@strong{Value }
- @tab @strong{Kind of search }
-@item 
-:first
- @tab Depth first search, stopping at the first plan found
-@item 
-:all
- @tab Depth-first search, but don't stop until all plans in plans(S, T,
-M) have been found
-@item 
-:shallowest
- @tab Depth-first search for the shallowest plan (or the first such plan
-if there is more than one of them). In many domains, this is also the
-least-cost plan
-@item 
-:all-shallowest
- @tab Depth-first search for all shallowest plans in the search space
-@item 
-:id-first
- @tab Iterative-deepening search, stopping after the first plan found
-@item 
-:id-all
- @tab Iterative-deepening search for all shallowest plans
-@end multitable
-
-@quotation
-The :id-all and :id-first options are equivalent to taking a modified
-version of find-plans that backtracks each time it reaches depth
-@emph{d}, and calling it repeatedly with @emph{d} = 1, 2, ..., until a
-plan is found.
-@end quotation
-@itemize
-@item
-@emph{verbose} says what information to print out, as shown in the
-following table. The default value for @emph{verbose} is 1.
-
-@end itemize
-
-@multitable {3 or :long-plans} {The statistics plus a succinct version of each plan found (internal operators and operator costs are omitted).} 
-@item 
-@strong{Value }
- @tab @strong{What to print }
-@item 
-0 or nil
- @tab Nothing
-@item 
-1 or :stats
- @tab Some statistics about the search
-@item 
-2 or :plans
- @tab The statistics plus a succinct version of each plan found
-(internal operators and operator costs are omitted).
-@item 
-3 or :long-plans
- @tab The statistics plus the complete version of each plan found
-@end multitable
-
-@itemize
-@item
-@emph{If gc} is non-nil, then find-plans calls the garbage collector
-just before starting its search, thus making it somewhat easier to get
-repeatable experimental results. Note that this feature of @sysname is only
-supported under Macintosh Common Lisp and Allegro Common Lisp; in all
-other Lisp implementations the value for this keyword is ignored. The
-default value of gc is @emph{t.}
-
-@item
-If @emph{pp} is non-nil, then all printing done by @sysname is performed
-using the Common Lisp pretty-printing mechanism. This typically leads to
-more easily read output. The default value of @emph{pp} is t.
-
-@item
-The @emph{state} argument controls how states are represented
-internally. @sysname can have different performance characteristics
-depending on the value provided to this augment. If you are encountering
-out-of-memory errors in @sysname or you want to get the maximum speed
-possible from @sysname for a particular set of problems, you may wish to
-experiment with different values for this argument. The default value is
-:mixed, which represents states using a combination of lists and hash
-tables; this value has been shown to provide a reasonably good
-combination of speed and memory usage on a variety of test problems. The
-other values are :list, :hash, and :bit.
-
-@item
-The @emph{optimize-cost} argument is used to perform planning with
-branch-and-bound optimization of the total plan cost. The default value
-for this argument is nil. If the value of this argument is nil, the
-optimization feature is disabled. If the value of the argument is t,
-@sysname will search for plans with the minimum total cost. If the value of
-the argument is a number, @sysname will use the branch-and-bound technique
-to search for plans with cost less than or equal to the value of the
-argument. The optimization feature is written under the assumption that
-the costs of operators are always non-negative. If this assumption is
-invalid, @sysname will produce unreliable results (specifically it will
-prune out some valid plans). The interaction of :optimize-cost with the
-various options for :which can be subtle. Below are notes on each
-possible combination:
-
-@itemize
-@item
-(:which :first :optimize-cost t)
-
-@end itemize
-
-@end itemize
-
-@quotation
-Under these arguments, @sysname returns the first plan found for which no
-other valid plan has a lower total cost. Note that this option may take
-much more time to run than using (:which :first :optimize-cost nil)
-since even after it finds the plan, it must keep searching to see if it
-can find a cheaper plan. However, this option may be significantly
-faster than (:which :all :optimize-cost nil) since the branch-and-bound
-mechanism will prune out non-optimal plans without having to consider
-them all the way to the end. In some cases, this will mean that (:which
-:first :optimize-cost t) terminates and (:which :all :optimize-cost nil)
-does not.
-@end quotation
-@itemize
-@item
-(:which :first :optimize-cost @emph{number})
-
-@end itemize
-
-@quotation
-Under these arguments, @sysname returns the first plan found whose total
-cost is less than or equal to the number given. If there is no plan
-whose total cost is less than or equal to that number, @sysname will return
-no plans. Note that if the number given is large enough, these arguments
-can produce results much more quickly than with (:which :first
-:optimize-cost t); specifically, as soon as @sysname finds a plan for which
-the cost is met, it can terminate and does not have to keep searching
-for cheaper plans.
-@end quotation
-@itemize
-@item
-(:which :all :optimize-cost t)
-
-@end itemize
-
-@quotation
-Under these arguments, @sysname returns all plans for which no other valid
-plan has a lower total cost. Obviously, all plans returned under these
-options will have equal total cost.
-@end quotation
-@itemize
-@item
-(:which :all :optimize-cost @emph{number})
-
-@end itemize
-
-@quotation
-Under these arguments, @sysname returns all plans with total cost less than
-or equal to the given number.
-@end quotation
-@itemize
-@item
-(:which :shallowest :optimize-cost t)
-
-@end itemize
-
-@quotation
-Under these arguments, @sysname returns a plan that has the shallowest
-depth of all valid plans and for which there is no other shallowest
-depth valid plan which has a lower total cost. In other words, these
-arguments produce the cheapest of all shallowest plans (which,
-incidentally, is not necessarily the same thing as the shallowest of all
-cheapest plans).
-@end quotation
-@itemize
-@item
-(:which :shallowest :optimize-cost @emph{number})
-
-@end itemize
-
-@quotation
-Under these arguments, @sysname returns a plan which has the shallowest
-depth of all valid plans and whose total cost is less than or equal to
-the given number. Note that if there is no plan whose cost is less than
-or equal to the number and whose depth is shallowest among all valid
-plans, then no plan will be returned (even if there are deeper plans
-which do have cost less than or equal to the number).
-@end quotation
-@itemize
-@item
-(:which :all-shallowest :optimize-cost t)
-
-@end itemize
-
-@quotation
-Under these arguments, @sysname returns all plans which have the shallowest
-depth of all valid plans and for which there is no other shallowest
-depth valid plan which has a lower total cost.
-@end quotation
-@itemize
-@item
-(:which :all-shallowest :optimize-cost @emph{number})
-
-@end itemize
-
-@quotation
-Under these arguments, @sysname returns all plans which have the shallowest
-depth and whose total cost is less than or equal to the given number.
-@end quotation
-@itemize
-@item
-(:which :id-first) or (:which :id-all)
-
-@end itemize
-
-@quotation
-The @emph{id-first} and @emph{id-all} arguments produce the same results
-as the @emph{shallowest} and @emph{all-shallowest} arguments,
-respectively for each different combination with :optimize-cost. Note,
-however, that there are domains for which @sysname will terminate using
-@emph{id-first} and @emph{id-all} and will not terminate using other
-values for :which.
-@end quotation
-@itemize
-@item
-@quotation
-The @emph{time-limit} argument may either nil or a number. Its default
-is nil and if it is nil, no time limit is imposed on the planning
-process. If the @emph{time-limit} argument is a number, @sysname will check
-the elapsed CPU time at the start of each step of the planning process,
-and if the number of seconds elapsed is greater than the argument value,
-@sysname will immediately terminate. The main use for this feature is in
-combination with (:optimize-cost t) argument, in order to return the
-optimal value found within the given time limit. For example, consider
-the call (find-plans 'foo :verbose 1 :optimize-cost t :time-limit 120).
-This call addresses a problem named @emph{foo}, and runs until it either
-finds the minimum cost plan or until 2 minutes have elapsed. It then
-returns the lowest cost plan that it found during that time. This
-functionality is inspired, in part, by Anytime Algorithms [Dean and
-Boddy, 1998].
-@end quotation
-@item
-@quotation
-If @emph{explanation} is non-nil, @sysname adds extra information at the
-end of each operator explaining how the preconditions for that operator
-were satisfied. Currently supports only logical atoms, and, and or; it
-doesn't work with forall, not, eval, etc. If this feature is used with
-the external-access-hook feature (see Section 5.4), any attribution
-information provided by the external-access-hook routine is included in
-the relevant explanation. The default value of @emph{explanation} is
-nil.
-@end quotation
-@item
-@quotation
-The @emph{plan-tree} argument defaults to nil; if true, the planner will
-return two additional values: (1) a list of complete task decomposition
-trees for the plans and (2) a list of plan state data structures
-corresponding to the final states of each plan. Plan trees are encoded
-in a nested list format in which the decomposition of an upper level
-task into lower level tasks is represented by the upper level task atom,
-followed by trees for each lower level task. The leaves of the tree,
-involving operators, are each lists of three elements: the cost of the
-operator, the task atom for the operator, and the numerical position of
-the operator in the plan (staring at 1). For example, a task (travel
-houston springfield) that was directly decomposed into operators, (!fly
-houston boston) with cost 200 and (!drive boston springfield) with cost
-50, would have the following plan tree:
-@end quotation
-@end itemize
-
-((travel houston sprinfield)
-
-(200 (!fly houston boston) 1)
-
-(50 (!drive boston springfield) 2))
-
-@node Tracing, Other Debugging Features, Executing the Planner, Running SHOP3
-@section Tracing
-@anchor{#tracing}
-There are two functions used for controlling the tracing mechanism in
-@sysname: shop-trace and shop-untrace. These are similar to Lisp's trace
-and untrace functions. Once they have been invoked, subsequent calls to
-find-plans or do-problems will print out information about elements of
-the domain for which tracing is enabled whenever those elements are
-encountered. More specifically:
-
-@itemize
-@item
-@lisp
-(shop-trace @var{item})
-@end lisp
-will turn on tracing for @var{item}, which may be any
-of the following:
-@itemize
-@item
-a method, axiom, operator, task, or goal;
-@item
-one of the keywords @code{:methods}, @code{:axioms}, @code{:operators}, @code{:tasks}, @code{:goals}, or
-@code{:protections} in which case @sysname will trace @emph{all} items of that type
-(@code{:goals} refers to predicates that are goals for the theorem-prover, and
-@code{:protections} refers to predicates used as arguments of @code{:protection} in
-operators);
-@item
-the keyword @code{:states}, in which case @sysname will include the current state
-whenever it prints out a tracing message
-@item
-the keyword @code{:plans} in which case @sysname will print diagnostic information
-whenever it has found a plan (and may be considering whether or not to
-keep the plan, depending on the :which and :optimize arguments of
-seek-plans).
-@item
-The keyword @code{:all}, which will trace all available items, currently
-methods, axioms, operators, tasks, goals and protections.
-@end itemize
-
-@item 
-@lisp
-(shop-trace @emph{item1 item2} ...)
-@end lisp
- will do the same for a list of items
-@item
-@code{(shop-trace)} will print a list of what's currently being traced
-@item
-@code{(shop-untrace @emph{item})} will turn off tracing for an item
-@item
-@code{(shop-untrace @emph{item1 item2} ...)} will turn off tracing for a list
-of items
-@item
-@code{(shop-untrace)} will turn off tracing for all items
-@end itemize
-
-@node Other Debugging Features, Syntax Checks, Tracing, Running SHOP3
-@section Other Debugging Features
-@anchor{#other-debugging-features}
-There are three variables, namely *current-state*, *current-plan*, and
-*current-tasks*, in @sysname. These variables can be used to monitor the
-current status of the state, current plan and the list of current tasks
-to be accomplished respectively. Since these are the internal variables
-of the @sysname planning system, the following functions are defined to
-access the current contents of those variables: @code{print-current-state},
-@code{print-current-plan}, and @code{print-current-tasks}, respectively. Note that
-these are Lisp functions that must be called by using the Lisp
-evaluator. The best way to use these functions is to define dedicated
-methods in the domain that invoke the functions using eval or call
-expressions in their predicates. Those methods can then be used in the
-problem definition where debugging output is needed. For example, the
-following methods can be included in any domain description for this
-purpose:
-
-@lisp
-(:method (print-current-state)
-    ((eval (print-current-state)))
-    ())
-
-(:method (print-current-tasks)
-   ((eval (print-current-tasks)))
-   ())
-
-(:method (print-current-plan)
-    ((eval (print-current-plan)))
-    ())
-@end lisp
-
-
-And these special purpose methods can be used in the task decompositions
-of other methods for debugging purposes. For example,
-
-@lisp
-(:method
-    (do-both ?x ?y)
-    nil
-    (:ordered
-      (:task !do ?y)
-      (:task print-current-state)
-      (:task !do ?x))))
-@end lisp
-
-There is now a new variable, @var{*break-on-backtrack*}, that will cause the
-Lisp environment to throw into a break loop when @sysname backtracks.
-
-@node Syntax Checks, Debugging Suggestions, Other Debugging Features, Running SHOP3
-@section Syntax Checks
-@anchor{#syntax-checks}
-We have adopted for @sysname the “singleton variable” check common in
-Prolog implementations. Logic variables are used to express unification
-constraints on expressions. In practice, a singleton logical variable in
-a @sysname expression (a method, operator, or axiom definition) is often a
-typographical error. Accordingly, @sysname will issue a warning when it
-encounters a logical variable used only once. If the single use is
-correct, the proper (and nicely self-documenting) way to disable this
-warning is to use an @emph{anonymous variable} (see page 7).
-
-@node Debugging Suggestions, Hook Routines, Syntax Checks, Running SHOP3
-@section Debugging Suggestions
-@anchor{#debugging-suggestions}
-When you have a problem that does not solve as expected, the following
-general recipe may help you home in on bugs in your domain definition:
-
-@enumerate 
-@item
-Start by doingo@code{(SHOP-TRACE :TASKS)} and then try @code{FIND-PLANS} again.
-
-@item
-In many cases, the domain will be written so that there will be little
-or no backtracking. In this case, examine the output of the traced call
-to @code{FIND-PLANS} and look for the first backtracking point.
-
-@item
-The above process should help you identify a particular task, either a
-primitive or a complex task, as a likely problem spot. If it's a
-primitive task, the next step is to examine the operator definition. If
-it's a complex task, you should check the method definitions. If you
-have any trouble identifying which method definition is relevant, you
-can use @code{(SHOP-TRACE :METHODS)} to further focus your attention.
-
-@item
-If visual inspection of method and operator definitions does not reveal
-the problem, you most likely have problems with precondition
-expressions. In this case, try using @code{(SHOP-TRACE :GOALS)}, rerunning
-@code{FIND-PLANS} and check to see what's happened when your problematic method or
-operator's preconditions are checked.
-
-@end enumerate
-
-This recipe has proven effective for finding the vast majority of bugs
-in @sysname domains.
-
-@node Hook Routines,  , Debugging Suggestions, Running SHOP3
-@section Hook Routines
-@anchor{#hook-routines}
-@sysname recognizes several different hook routines. These are Lisp
-routines that may be defined by the user; if they are defined, they are
-invoked under specific circumstances. Hook routines are typically used
-when embedding @sysname in an application; they allow such an application
-to obtain additional information from @sysname or to affect it's behavior.
-There are three hooks that are recognized by @sysname:
-
-@itemize
-@item
-@code{(plan-found-hook state which plan cost depth)}
-If this routine is defined, @sysname invokes it whenever it finds a plan.
-It can be useful for displaying and/or recording details about the plan.
-The arguments are the current state, the value for the :which argument
-that was provided to the planner, the plan, the cost of the plan, and
-the search depth at which the plan was found.
-@item
-@code{(trace-query-hook type item additional-information state-atoms)}
-If this routine is defined, @sysname invokes it whenever it invokes the
-@c FIXME: fix cross-reference
-tracing mechanism (See Section 5.2). The arguments include the type of
-item being traced (e.g., @code{:task}, @code{:method}), the item, the list of Lisp
-values that are printed by the tracing mechanism, and a list of logical
-atoms in the current state.
-@item
-@code{(external-access-hook query)}
-This hook routine is intended to allow @sysname to use an external source
-(such as a database) to determine the applicability of methods and
-operators. To use this hook routine, a domain must include one or more
-logical expressions that have the keyword :external as the first symbol.
-Such expressions must only involve a single logical atom, or a single
-conjunction of logical atoms. When @sysname attempts to find a binding that
-satisfies such an expression, it will first invoke external-access-hook
-to satisfy the expression; if that routine is undefined or returns nil,
-@sysname will then try to satisfy the expression using its internal
-knowledge state. The argument to external-access-hook is a list of the
-form @code{'(and (@var{pred} @var{val} @var{val})...)}. It returns a list of responses,
-each of which is a list of two elements: an attribution and a list of
-bindings for the unbound variables in the query. The attribution is
-stored for use with the @emph{explanation} option for the planning
-@c FIXME -- redo cross-reference
-system (See Section 5.1). For example, consider a method that has the
-following precondition:
-
-@lisp
-(or (and (clear ?b1)
-             (clear ?b2)
-             (clear ?b3))
-     (:external and (on ?b1 ?b2) (on ?b2 ?b3)))
-@end lisp
-
-When this precondition is encountered and external-access-hook is
-defined, @sysname invokes that routine with the argument @code{'(and (on ?b1 ?b2)
-(on ?b2 ?b3))}. The routine might (for example) return the list:
-
-@lisp
-'((database-123 ((?b1 block10) (?b2 block 11) (?b3 block 12)))
-  (database-223 ((?b1 block20) (?b2 block 21) (?b3 block 22))))
-@end lisp
-@end itemize
-
-
-@node Using the SHOP Theorem Prover, Internal Technical Information, Running SHOP3, Top
+@node Using the SHOP Theorem Prover, Internal Technical Information, The SHOP3 Formalism, Top
 @chapter Using the SHOP Theorem Prover
 @anchor{#using-the-shop-theorem-prover}
-One of the main extensions that SIFT has made to @sysname is to make its
-theorem prover usable separately. The @sysname theorem-prover is very
+One of the main extensions that SIFT has made to @sysname {} is to make its
+theorem prover usable separately. The @sysname {} theorem-prover is very
 similar to Prolog, but operates over a state that changes over time.
 
 @node Internal Technical Information, PDDL Compatibility, Using the SHOP Theorem Prover, Top
 @chapter Internal Technical Information
 @anchor{#internal-technical-information}
 This section presents information about the internal workings of the
-@sysname planning process. @strong{Important Note}: This section is
+@sysname {} planning process. @strong{Important Note}: This section is
 primarily of interest to planning researchers and planning system
-developers. Most @sysname users (especially beginning users) are advised to
+developers. Most @sysname {} users (especially beginning users) are advised to
 skip this section.
 
 The first subsection presents some key internal knowledge structures
 that must be defined in order to completely specify the behavior of
 @sysname. The second subsection presents the formal semantics of operators
 and plans. The third subsection describes an assortment of functions
-within @sysname that are used to accomplish those semantics.
+within @sysname {} that are used to accomplish those semantics.
 @menu
 * Internal Knowledge Structures::
 * Formal Semantics::
@@ -1821,7 +1772,7 @@ within @sysname that are used to accomplish those semantics.
 @node Internal Knowledge Structures, Formal Semantics, Internal Technical Information, Internal Technical Information
 @section Internal Knowledge Structures
 @anchor{#internal-knowledge-structures}
-The following @sysname internal knowledge structures must be defined in
+The following @sysname {} internal knowledge structures must be defined in
 order to fully specify the semantics of plan generation in @sysname.
 @menu
 * Substitutions::
@@ -2045,7 +1996,7 @@ the tasks specified in the method's tail.
 
 This subsection elaborates these informal notions, presenting detailed
 formal semantics of operators and plans. It is of particular use to
-anyone who has a @sysname domain and wishes to prove theorems (e.g.,
+anyone who has a @sysname {} domain and wishes to prove theorems (e.g.,
 correctness, completeness, etc.) regarding plans generated in that
 domain.
 @menu
@@ -2057,7 +2008,7 @@ domain.
 @node Semantics of Operators, Semantics of Methods, Formal Semantics, Formal Semantics
 @subsection Semantics of Operators
 @anchor{#semantics-of-operators}
-@emph{@strong{Update note:} @sysname now supports PDDL operators, which
+@emph{@strong{Update note:} @sysname {} now supports PDDL operators, which
 have cleaner (but more restricted) semantics. Their semantics is
 discussed in many treatments of the PDDL specification. We hope to add
 an explanation later. See Chapter} @emph{7 for discussion of PDDL
@@ -2489,9 +2440,9 @@ Then P@sub{1} and P@sub{2} are all of the plans that solve
 @node Key Functions in SHOP3,  , Formal Semantics, Internal Technical Information
 @section Key Functions in @sc{Shop3}
 Below are some important functions in the Lisp implementation of @sysname.
-They should be of interest to anyone who wishes to modify @sysname or to
+They should be of interest to anyone who wishes to modify @sysname {} or to
 directly access internal capabilities of @sysname. Pseudocode algorithms
-for the main planning functions of @sysname are also presented.
+for the main planning functions of @sysname {} are also presented.
 
 @lisp
 (apply-substitution e u)
@@ -2699,7 +2650,7 @@ Otherwise, it returns FAIL.
 @quotation
 optimize-cost time-limit explanation)
 
-This function implements the @sysname planning algorithm. For more about
+This function implements the @sysname {} planning algorithm. For more about
 the arguments to and use of this function, see Section 5.1. A brief
 overview of the algorithm for this function is presented here. Calling
 find-plans is roughly equivalent to calling the following pseudocode,
@@ -2805,7 +2756,7 @@ This macro gives the name @emph{set-name} to the set of planning
 problems in @emph{list-of-problems}. (More specifically, what it does is
 to store @emph{list-of-problems} on @emph{set-name}'s property list.)
 @end quotation
-Note that for backwards compatibility, @sysname also accepts the forms
+Note that for backwards compatibility, @sysname {} also accepts the forms
 make-domain, make-problem, and make-problem-set, which were employed in
 SHOP 1.x, using the same arguments as defdomain, defproblem, and
 def-problem-set. The difference between the make-X and def-X forms is
@@ -2820,7 +2771,7 @@ domain one might define a problem as
 @quotation
 ‘(list of tasks to be accomplished))
 @end quotation
-whereas in @sysname the syntax becomes
+whereas in @sysname {} the syntax becomes
 
 (defproblem problem-name domain-name
 
@@ -2830,7 +2781,7 @@ whereas in @sysname the syntax becomes
 (list of tasks to be accomplished))
 @end quotation
 where the arguments are all quoted in the SHOP 1.x make-problem
-function, they are unquoted when using the @sysname defproblem macro.
+function, they are unquoted when using the @sysname {} defproblem macro.
 
 (print-axioms &optional @emph{name})
 
@@ -2878,8 +2829,8 @@ are simply passed on to find-plans.
 @node PDDL Compatibility, Version Differences, Internal Technical Information, Top
 @chapter PDDL Compatibility
 @anchor{#pddl-compatibility}
-The current release of @sysname provides a preliminary capability to
-incorporate PDDL domain definitions into a @sysname domain. You should be
+The current release of @sysname {} provides a preliminary capability to
+incorporate PDDL domain definitions into a @sysname {} domain. You should be
 able to incorporate components of a PDDL domain definition into a @sysname
 domain definition of :type pddl-domain or simple-pddl-domain. A
 pddl-domain corresponds to a PDDL domain of the ADL type. The
@@ -2917,7 +2868,7 @@ be a “strict mode” that checks for true conformance with PDDL syntax.
 @section PDDL Methods
 @anchor{#pddl-methods}
 In order to support replanning, we have developed “PDDL methods” that
-have more limited expressive power than normal @sysname methods, and that
+have more limited expressive power than normal @sysname {} methods, and that
 have clearer semantics. This feature is @emph{experimental:} the syntax,
 semantics, and implementation are all likely to change.
 
@@ -2928,7 +2879,7 @@ PDDL method proposed syntax:
 @end lisp
 
 
-As in normal @sysname methods (see Section 4.11), a PDDL Method's head is a
+As in normal @sysname {} methods (see Section 4.11), a PDDL Method's head is a
 task. We notate it here as @emph{head@sub{[φ]}} in order to indicate
 that some set of variables, φ, may appear free in the head. Similarly,
 we have @emph{precond@sub{[φ]}} and @emph{body@sub{[φ] }}to indicate
@@ -2945,12 +2896,12 @@ that all operators must be ground when inserted into the plan. The
 intention is to allow the variables in φ to be bound by the
 preconditions. As in PDDL operators, only the variables in the head of a
 PDDL method are scoped over the preconditions and the body (in standard
-@sysname methods we have Prolog-style scoping where any free variable is
+@sysname {} methods we have Prolog-style scoping where any free variable is
 implicitly scoped over the entire method).
 
 Note also that PDDL methods do @emph{not} permit multiple precondition
 sets and task networks in a single PDDL method form, and so do
-@emph{not} support the if-then-else semantics of @sysname method forms. To
+@emph{not} support the if-then-else semantics of @sysname {} method forms. To
 get this kind of semantics in PDDL methods, the programmer must supply a
 set of methods with mutually-exclusive and exhaustive preconditions.
 
@@ -2999,7 +2950,7 @@ could change.
 @node PDDL Domain Classes,  , Enhanced Preconditions, PDDL Methods
 @subsection PDDL Domain Classes
 @anchor{#pddl-domain-classes}
-In order to implement the requirements of PDDL, @sysname contains a number
+In order to implement the requirements of PDDL, @sysname {} contains a number
 of classes, which can be used when defining domains with defdomain (see
 Section 4.12):
 
@@ -3057,15 +3008,15 @@ ADL-MIXIN
 
 @node Version Differences, General Notes on SHOP3, PDDL Compatibility, Top
 @chapter Differences between SHOP 1.x, SHOP2 and @sysname {}
-The differences between @sysname and SHOP 1.x can be grouped in two sets:
+The differences between @sysname {} and SHOP 1.x can be grouped in two sets:
 syntactic changes in the domain definitions and differences in
 functionality.
 
 @emph{@strong{Note:} This section has not been updated since the
-extensive modifications were made to @sysname (since as time goes by, the
+extensive modifications were made to @sysname {} (since as time goes by, the
 number of people who would find it useful dwindles more and more). It
 provides an effective description of the difference between SHOP1 and
-the @strong{original}} @emph{@sysname syntax, but does not reflect updates
+the @strong{original}} @emph{@sysname {} syntax, but does not reflect updates
 in the past decade. This section should probably be removed. -- rpg
 December 22, 2017}
 @menu
@@ -3332,14 +3283,14 @@ go-park-rich
 *def-problem-set is not available in JSHOP
 @item 
 (do-problems 'travel :which :all)
- @tab Works in @sysname without any changes. Not available in JSHOP.
+ @tab Works in @sysname {} without any changes. Not available in JSHOP.
 @end multitable
 
 To summarize, the changes in syntax are as follows:
 
 @itemize
 @item
-Quotes, back quotes and commas are not used in @sysname except as needed in
+Quotes, back quotes and commas are not used in @sysname {} except as needed in
 general Lisp expressions.
 
 @item
@@ -3375,11 +3326,11 @@ In SHOP 1.x it was valid to have methods of the following form, where
 
 This kind of method is not supported in @sysname.
 @end quotation
-Note that in many cases, @sysname is able to process SHOP 1.x syntax (i.e.,
-@sysname is partially backward compatible). For example, the old
+Note that in many cases, @sysname {} is able to process SHOP 1.x syntax (i.e.,
+@sysname {} is partially backward compatible). For example, the old
 @emph{make-domain} and @emph{make-problem} forms can be handled by
 @sysname. It is recommended, however, that new domains be written using the
-new @sysname forms.
+new @sysname {} forms.
 
 @node SHOP 1x Functionality Comparison,  , SHOP 1x Syntax Comparison, Version Differences
 @section SHOP 1.x Functionality Comparison
@@ -3389,7 +3340,7 @@ The following are some key differences between the functionality of SHOP
 
 @itemize
 @item
-Unlike SHOP 1.x, @sysname allows the combination of partially ordered and
+Unlike SHOP 1.x, @sysname {} allows the combination of partially ordered and
 fully ordered tasks through the use of the :unordered and :ordered
 keywords.
 
@@ -3397,7 +3348,7 @@ keywords.
 
 @itemize
 @item
-The following keywords in @sysname domain definitions are not supported in
+The following keywords in @sysname {} domain definitions are not supported in
 SHOP 1.x: or, assign, sort-by, forall. The functionality associated with
 those keywords is not available in SHOP 1.x.
 
@@ -3407,20 +3358,21 @@ to arbitrary logical expressions.
 
 @item
 The :optimize-cost, :time-limit, and :plan-tree keyword arguments for
-@sysname are not supported in SHOP 1.x. The functionality associated with
+@sysname {} are not supported in SHOP 1.x. The functionality associated with
 those keywords is not available in SHOP 1.x.
 
+@c FIXME: Cut this whole section or fix the cross-references.
 @item
-The debugging features in @sysname (see Sections 5.2 and 5.3) are not
+The debugging features in @sysname {} (see Sections 5.2 and 5.3) are not
 present in SHOP 1.x.
 
 @item
-@sysname version 1.1 includes a Java interface. SHOP 1.x has no such
+@sysname {} version 1.1 includes a Java interface. SHOP 1.x has no such
 interface.
 
 @end itemize
 
-@sysname is largely backward compatible with SHOP 1.x . @sysname can run most
+@sysname {} is largely backward compatible with SHOP 1.x . @sysname {} can run most
 SHOP 1.x knowledge bases with only little or no modification.
 
 @node General Notes on SHOP3, Acknowledgments, Version Differences, Top
@@ -3485,8 +3437,8 @@ one operator for the same primitive task. Otherwise, your plans will be
 ambiguous.
 
 @item
-The following two calls to find-plans @sysname will find the same set of
-all shallowest plans, but in the first case @sysname will use a depth-first
+The following two calls to find-plans @sysname {} will find the same set of
+all shallowest plans, but in the first case @sysname {} will use a depth-first
 search and in the second case it will use an iterative-deepening search:
 
 @end enumerate
@@ -3496,8 +3448,8 @@ search and in the second case it will use an iterative-deepening search:
 
 (find-plans 'p :which :id-all)
 
-Likewise, the following two calls to @sysname will both find the same
-shallowest plan, but in the first case @sysname will use a depth-first
+Likewise, the following two calls to @sysname {} will both find the same
+shallowest plan, but in the first case @sysname {} will use a depth-first
 search and in the second case it will use an iterative-deepening search:
 
 (find-plans 'p :which :shallowest)
@@ -3508,13 +3460,13 @@ search and in the second case it will use an iterative-deepening search:
 @node Acknowledgments, References, General Notes on SHOP3, Top
 @chapter Acknowledgments
 @anchor{#acknowledgments}
-Original University of Maryland work on @sysname was supported in part by
+Original University of Maryland work on @sysname {} was supported in part by
 the following grants, contracts, and awards: Air Force Research
 Laboratory F30602-99-1-0013 and F30602-00-2-0505, Army Research
 Laboratory DAAL01-97-K0135, and National Science Foundation DMI-9713718,
 and the University of Maryland General Research Board.
 
-SIFT, LLC work on @sysname has been supported by DARPA SBIR contract
+SIFT, LLC work on @sysname {} has been supported by DARPA SBIR contract
 DAAH01-03-C-R177, Army AFDD contract NAS-0155(MJH), Delivery Order 920,
 by the Air Force Research Laboratory (AFRL) under contract
 FA8750-16-C-0182,and by Contract FA8650-11-C-7191 with the US Defense
