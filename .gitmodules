@@ -22,4 +22,4 @@
 [submodule "jenkins/ext/sb-texinfo"]
 	path = jenkins/ext/sb-texinfo
 	url = https://github.com/rpgoldman/sb-texinfo.git
-	branch = master
+	branch = for-shop
