@@ -2,6 +2,12 @@
 @macro sysname {}
 @sc{Shop3}
 @end macro
+@macro shop {}
+@sc{Shop}
+@end macro
+@macro shoptwo {}
+@sc{Shop2}
+@end macro
 
 @settitle SHOP3 Manual
 @copying
@@ -59,53 +65,82 @@ College Park, MD 20742, USA
 
 @node Introduction, Execution Environment, Top, Top
 @chapter Introduction
-@anchor{#introduction}
-This document presents the design and implementation details of @sysname,
-the Simple Hierarchical Ordered Planner. @sysname {} adds several extensions
-to the functionality of SHOP 1.6.1 and MSHOP 1.1.1, and adopts a
-modified domain syntax for partial compatibility with the recently
-released Java version of SHOP, which is known as JSHOP 1.0. This
-document is based, in part, on the JSHOP documentation written by Füsun
-Yaman, with additional material from Yue Cao's December 2000 draft of
-the @sysname {} documentation and pseudocode from [Nau @emph{et a}l., 2001].
-The entire SHOP research group shares credit for the content of this
-document, especially Professor Dana S. Nau who wrote the original
-version of SHOP and its documentation. Additional contributions were
-made by Robert P. Goldman and John Maraist of SIFT, LLC.
 
-SHOP (Simple Hierarchical Ordered Planner) is a domain-independent
+AI planning is the subfield of artificial intelligence (AI) that aims at
+automating processes of @emph{means-ends reasoning}.  In general, 
+AI planning is the problem of
+finding a sequence of actions that, executed in a specified initial
+state, will reach a goal state.  This is a problem with applications
+to diverse areas including manufacturing, autonomous space and deep
+sea exploration, medical treatment, and military operations, to name
+just a few.  This is the manual for @sysname {}, the third major version
+of the  Simple Hierarchical Ordered Planner.
+
+AI planning systems takes as input a @emph{domain} -- a description of
+available actions, relations, etc.; a @emph{problem} -- a description of
+the initial state of the system, and an @emph{objective}, a task to be performed or goal to
+be achieved.  From these, it generates a @emph{plan}: a sequence of
+actions that, if performed with the expected results, will attain the
+objective.  This is the key function performed by @sysname {}, although,
+as will be seen in this manual, many additional functions are offered.
+
+@sysname {} is a domain-independent
 planning system based on @strong{ordered task decomposition}, a modified
-version of HTN planning that involves planning for tasks in the same
+version of Hierarchical Task Network (HTN) planning that involves planning for tasks in the same
 order that they will later be executed. An HTN, or @emph{decomposition,}
-planner “proceeds by decmoposing @emph{nonprimitive tasks} recursively
+planner “proceeds by decomposing @emph{nonprimitive tasks} recursively
 into smaller and smaller subtasks, until @emph{primitive tasks} are
 reached that can be performed directly using the planning
 operators.”@footnote{From @emph{Automated Planning: Theory and
 Practice,} Ghallab, Nau and Traverso, Morgan Kaufmann, 2004.} This
 manual does not give an introduction to HTN planning or AI planning in
 general, for that we recommend the above-cited textbook by Ghallab,
-@emph{et al.,} and/or the research papers describing @sysname. SHOP has the
-following characteristics:
+@emph{et al.,} and/or the research papers describing @sysname {}.
+
+@sc{Shop} and @sc{Shop 2} were originally developed at the Computer
+Science Department of the University of Maryland, College Park, by
+Prof. Dana Nau's research group.  This manual draws heavily on material
+from the manual for @sc{Shop 2}, which was, in turn based, in part, on the JSHOP documentation written by Füsun
+Yaman, with additional material from Yue Cao's December 2000 draft of
+the @sc{Shop 2}  documentation and pseudocode from [Nau @emph{et al}.,
+2001].  Some updates to the @sc{Shop 2} manual were made by Robert
+P. Goldman and John Maraist, of SIFT.
+
+@sysname {} contains two important subsystems that perform useful
+functions as part of @sysname {}, but that can be used on their own.
+The first is the @emph{unifier}, which computes the most general unifier
+of two logical formulas, encoded as lisp s-expressions.
+@c FIXME: Add cite for the unification algorithm
+The second subsystem is the @emph{theorem-prover}, which performs
+Prolog-style rule-based Horn clause deduction over state sequences.
+@c FIXME: When we have chapters for these, add cross-references.
+
+
+The planners in the @shop {} family have the following distinctive characteristics:
 
 @itemize
 @item
-SHOP knows the current state-of-the-world at each step of the planning
+@shop {} knows the current state-of-the-world at each step of the planning
 process.
 
 @item
-It has large expressive power. For example, in the preconditions of
+It has great expressive power, far beyond that of conventional PDDL planners. 
+For example, in the preconditions of
 operators and methods it can do mixed symbolic/numeric computations and
 execute calls to external programs.
 
 @item
-SHOP can be used to create very efficient domain-specific planning
-algorithms. The SHOP software distribution includes several examples of
-such domain algorithms.
+It can be used to create very efficient domain-specific planning
+algorithms. The  software distribution includes several examples of
+such domain-specific algorithms.
 
-@item
-An earlier version of the SHOP algorithm implemented in Java is used as
-part of @uref{http://www.aic.nrl.navy.mil/hicap/,HICAP}, a
-plan-authoring system for complex military operations.
+@c @item
+@c An earlier version of the SHOP algorithm implemented in Java is used as
+@c part of @uref{http://www.aic.nrl.navy.mil/hicap/,HICAP}, a
+@c plan-authoring system for complex military operations.
+
+@c FIXME: Add pointer to the paper about SHOP2 applications.
+@c FIXME: Add pointer to the ELS 2019 paper.
 
 @item
 @sysname {} incorporates many features from
@@ -113,14 +148,25 @@ plan-authoring system for complex military operations.
 for quantifiers and conditional effects in methods and operators.
 
 @item
-@sysname {} allows the combination of partially ordered and fully ordered
-tasks through the use of the :unordered and :ordered keywords.
+@shoptwo {} and @sysname {} (unlike @shop {}) allow a combination of partially ordered and fully ordered
+task networks through the use of the @code{:unordered} and
+@code{:ordered} keywords.
+
+@item
+@sysname {} task networks are @emph{less} expressive than full HTN
+planners such as UMCP, @c FIXME -- add citation
+which have labeled tasks in their task networks and allow arbitrary
+ordering constraints.
 
 @item
 @sysname {} allows branch-and-bound optimization of plan costs. For small
 problems, this capability can be used to find the absolute minimum cost
 plans. For larger problems, this capability can be used with time limits
 to get the lowest cost plan that is found within the given time limit.
+
+@item
+@sysname {} adds support for the Planner Domain Description Language
+(PDDL), and updates the @shop {} language for easier domain engineering.
 
 @end itemize
 
@@ -3439,3 +3485,5 @@ and.S. Mitchell. Totally Ordered Planning with Partially Ordered
 Subtasks. In @emph{IJCAI-01}, 2001.
 
 @bye
+
+@c  LocalWords:  Ghallab nonprimitive
