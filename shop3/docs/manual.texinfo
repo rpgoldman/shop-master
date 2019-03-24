@@ -38,17 +38,6 @@ College Park, MD 20742, USA
 @node Top, Introduction, (dir), (dir)
 @top SHOP3 Manual
 
-
-
-
-@emph{@strong{Remarks:} The maintenance of this manual has long been
-deferred. We simply attempt to bring the document into conformance with
-the current implementation. Because this is only a first step towards
-such conformance, I have concentrated on capturing the changes to the
-system from the user's perspective. I have made little attempt to update
-the discussion of the implementation, and have ignored the Java version
-altogether. - Robert P. Goldman}
-
 @end ifnottex
 
 
@@ -84,63 +73,6 @@ document, especially Professor Dana S. Nau who wrote the original
 version of SHOP and its documentation. Additional contributions were
 made by Robert P. Goldman and John Maraist of SIFT, LLC.
 
-The rest of the document is organized as follows:
-
-@itemize
-@item
-Section one provides an overview of @sysname {} and of the downloadable
-distribution.
-
-@end itemize
-
-@itemize
-@item
-Section two describes the environment for execution of @sysname.
-
-@item
-Section three explains the typographic conventions used in this
-document.
-
-@item
-Section four presents the formalism used for inputs and outputs of
-@sysname.
-
-@item
-Section five provides instructions for running @sysname.
-
-@item
-Section six presents internal technical details regarding @sysname.
-
-@item
-Section seven presents the Java interface for @sysname.
-
-@item
-Section eight presents the @sysname {} Graphical User Interface. @emph{To the
-best of my knowledge, this GUI is bit-rotted, as of today, and does not
-work. -- rpg 15 Jul 2007.}
-
-@item
-Sections nine and ten summarize the differences between @sysname {} and SHOP
-1.x and JSHOP 1.0, respectively. @emph{To the best of my knowledge,
-JSHOP is unmaintained and bit-rotted. I don't know of anyone who wishes
-to maintain it, and I do not. -- rpg 15 Jul 2007.}
-
-@item
-Section eleven presents some general remarks on the @sysname {} system.
-
-@item
-Sections twelve and thirteen list acknowledgements and references,
-respectively.
-
-@end itemize
-
-@menu
-* Overview::
-@end menu
-
-@node Overview,  , Introduction, Introduction
-@section Overview
-@anchor{#overview}
 SHOP (Simple Hierarchical Ordered Planner) is a domain-independent
 planning system based on @strong{ordered task decomposition}, a modified
 version of HTN planning that involves planning for tasks in the same
