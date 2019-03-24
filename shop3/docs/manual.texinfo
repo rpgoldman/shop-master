@@ -1918,7 +1918,14 @@ similar to Prolog, but operates over a state that changes over time.
 @node The SHOP Unifier, Internal Technical Information, The SHOP Theorem Prover, Top
 @chapter The SHOP Unifier
 
-The top level function of the unifier is @code{unify}
+The @sysname{} unifier may be loaded stand-alone with
+@example
+(asdf:load-system "shop3/unifier")
+@end example
+
+It provides a library that may be useful for general symbolic
+computation that requires unification of first order (or, indeed, higher
+order) logical expressions represented as lisp s-expressions.
 
 @include include/fun-shopunif-unify.texinfo
 
@@ -1931,8 +1938,22 @@ To check the results of unification, @sysname{} offers these predicates:
 @include include/macro-shopunif-unify-fail.texinfo 
 @include include/macro-shopunif-unify-fail-p.texinfo
 
-A @emph{binding-list} or @emph{substitution} is a list of bindings.  To
-incorporate a unifier in a target expression, use
+A @emph{binding-list} or @emph{substitution} is a list of
+@emph{bindings}:
+
+@include include/struct-shopunif-binding.texinfo
+
+Accessors:
+
+@include include/fun-shopunif-binding-val.texinfo
+@include include/fun-shopunif-binding-var.texinfo
+
+Utility functions:
+
+@include include/fun-shopunif-make-binding-list.texinfo
+@include include/fun-shopunif-binding-list-value.texinfo
+
+To apply a unifier in a target expression, use
 @code{apply-substitution}:
 
 @include include/macro-shopunif-apply-substitution.texinfo
