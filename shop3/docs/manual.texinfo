@@ -22,6 +22,7 @@ Attribution-ShareAlike 4.0 International Public License
 
 @titlepage
 @title SHOP3 Manual
+@center @image{img/shop3-logo, 4in}
 @author Robert P. Goldman@sup{1}, Dana Nau@sup{2}, and Contributors
 @sup{1} SIFT, LLC
 
@@ -45,6 +46,22 @@ College Park, MD 20742, USA
 @ifnottex
 @node Top, Introduction, (dir), (dir)
 @top SHOP3 Manual
+
+@center @image{img/shop3-logo-small}
+
+@center Robert P. Goldman@sup{1}, Dana Nau@sup{2}, and Contributors
+
+@sup{1} SIFT, LLC
+
+319 North First Avenue, Suite 400
+
+Minneapolis, MN 55401, USA
+
+@sup{2} Department of Computer Science
+
+University of Maryland
+
+College Park, MD 20742, USA
 
 @end ifnottex
 
@@ -1939,6 +1956,7 @@ unlike the full @sysname{} domain, this one supports only specification
 of axioms (although it can be extended by the programmer).
 
 @include include/class-shopthpr-thpr-domain.texinfo
+
 
 @node The SHOP Unifier, Internal Technical Information, The SHOP Theorem Prover, Top
 @chapter The SHOP Unifier
