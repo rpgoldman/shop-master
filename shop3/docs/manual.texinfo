@@ -307,26 +307,40 @@ ASDF. Assuming that ASDF is properly installed, and the @sysname.asd system
 definition file can be found by ASDF,, the following command should get
 the system loaded:
 
-@lisp
-(asdf:load-system )
-@end lisp
+@example
+(asdf:load-system "shop3")
+@end example
 
 @sysname {} is defined in the @sysname {} package (and uses the @sysname.theorem-prover
 package). The easiest way to use the system for experimentation will be
 to change to the predefined @code{:SHOP-USER} package and work in there:
 
-@lisp
+@example
 (in-package :SHOP-USER)
-@end lisp
+@end example
 
 
 If you are working on a larger or more ambitious project, it will be
 more appropriate for you to work in a package of your own definition,
-which should, at least, :use the @sysname {} and common-lisp packages.
+which should, at least, @code{:use} the @code{SHOP3} and @code{COMMON-LISP} packages.
 
 @node Executing the Planner, Tracing, Loading the Planner, Running SHOP3
 @section Executing the Planner
 @anchor{#executing-the-planner}
+
+@c FIXME: Introductory paragraph goes here.
+
+
+
+@menu
+* @code{find-plans}: find-plans.
+* find-plans-stack::
+* @code{do-problems}: do-problems.
+* Common Keyword Arguments::
+@end menu
+
+@node find-plans, find-plans-stack, Executing the Planner, Executing the Planner
+@subsection @code{FIND-PLANS}
 The find-plans function has one mandatory argument, the name of a
 planning problem, and a set of optional keyword arguments. It returns up
 to four values. Find-plans will always return two values: (1) a list of
@@ -337,11 +351,27 @@ structures and (4) a list of final state data structures. From the plan
 state data structures, the user can extract full state trajectories for
 the plans.
 
-The do-problems function has one mandatory argument, which can either be
-the name of a planning problem set or a list of names of planning
-problems. It executes find-plans on each of the given planning problems
-and returns nil. Both of these functions use the same keyword arguments.
+@include include/fun-shop-find-plans.texinfo
 
+@node find-plans-stack, do-problems, find-plans, Executing the Planner
+@subsection @code{FIND-PLANS-STACK}
+
+@include include/fun-shop-find-plans-stack.texinfo
+
+@node do-problems, Common Keyword Arguments, find-plans-stack, Executing the Planner
+@subsection @code{DO-PROBLEMS}
+
+The @code{do-problems} function has one mandatory argument, which can either be
+the name of a planning problem set or a list of names of planning
+problems. It executes @code{ find-plans} on each of the given planning problems
+and returns @code{nil}. 
+
+@include include/fun-shop-do-problems.texinfo
+
+@node Common Keyword Arguments,  , do-problems, Executing the Planner
+@subsection Common Keyword Arguments
+
+@c FIXME: review the following...
 The keyword arguments to find-plans and do-problems are as follows:
 
 @itemize

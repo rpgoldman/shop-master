@@ -184,9 +184,12 @@ do NOT emit singleton variable warnings.")
       (format t "~%~s" answer))
     answer))
 
-;;; DO-PROBLEMS runs FIND-PLANS on each problem in PROBLEMS, which may be
-;;; either a problem-set name or a list of problems
 (defun do-problems (problems &rest keywords)
+  "DO-PROBLEMS runs FIND-PLANS on each problem in PROBLEMS, which may be
+either a problem-set name (a symbol) or a list of problems.
+
+Returns nothing of interest: should only be run for what it displays on the
+console."
   (if (not (listp problems))    ; treat NIL as an empty list, not a problem name
     (setq problems (get-problems problems)))
   (dolist (problem problems)
