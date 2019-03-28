@@ -1401,29 +1401,45 @@ cannot both have the @code{:immediate} keyword.
 @node  Operators, Methods, Task Lists, The SHOP3 Formalism
 @section  Operators
 @anchor{#operators}
-@emph{Note:} We have introduced an alternative syntax for operators,
-described below (Operators: Alternative Syntax). This alternative syntax
-is easier to author, and less error-prone, so we encourage you to use it
-instead of the “classical” form described here.
+
+
+
+
+
+The arguments marked with keywords are all optional, and may appear in
+any order. The add-list, and delete-list default to being empty. The
+preconditions default to being vacuously true, and the cost defaults to
+1.0.
+
+@emph{Note:} We still support @shoptwo{}'s original syntax for operators,
+described below (@pxref{Operators Legacy Syntax}).
 
 An @strong{operator} is description of how to perform a @emph{primitive}
 task, which cannot be decomposed further. An operator definition has the
 following form:
 
-(:operator @emph{h P D A} @emph{[c]})
+
+@lisp
+(:op @emph{head}
+       [:add @emph{add-list}]
+       [:delete @emph{delete-list}]
+       [:precond @emph{precondition}]
+       [:cost @emph{cost-fn}])
+@end lisp
 
 where
 
 @itemize
 @item
-@emph{h} (the operator's @strong{head}) is a primitive task atom (i.e.,
+@emph{head} (the operator's @strong{head}) is a primitive task atom (i.e.,
 a task atom with a task symbol that begins with an exclamation point)
 
-@item
-@emph{P} (the operator's @strong{precondition}) is a logical expression.
+@item The operator's
+@emph{precondition} is a logical expression.
 
 @item
-@emph{D} (the operator's @strong{delete list}) is a list for which each
+The operator's
+@emph{delete-list}) is a list for which each
 of the element may be any of following:
 
 @itemize
@@ -1441,21 +1457,16 @@ a list of logical atoms
 @end itemize
 
 @item
-@emph{A} (the operator's @strong{add list}) is a list of logical atoms
-that has the same form as D.
+The operator's
+@emph{add-list}) is a list of logical atoms
+that has the same form as the delete-list.
 
 @item
-@emph{c} (the operator's @strong{cost}) is a general Lisp expression. If
-@emph{c} is omitted, the cost is 1.
+@emph{cost-fn} (the operator's @strong{cost}) is a general Lisp expression. If
+@emph{c} is omitted, the cost defaults to 1.
 
 @end itemize
 
-For backwards compatibility with SHOP 1.x, @sysname {} will also accept
-operators where the precondition @emph{P} is missing. In this case the
-domain definition pre-processing code puts a null precondition into the
-operator, which is always satisfied. @emph{@sysname's ability to recognize
-operators without preconditions is deprecated and is likely to disappear
-in the future.}
 
 In the above definition, a @strong{protection condition} is an
 expression of the form
@@ -1475,16 +1486,15 @@ away from that location until after we have picked up the package.@  To
 represent this, we might use the following operators:
 
 @lisp
-(:operator (!drive-to ?truck ?old-loc ?location)
-   ()
-   ((at ?truck ?old-loc))
-   ((at ?truck ?location)
-    (:protection (at ?truck ?location))))
-(:operator (!pick-up ?truck ?package ?location)
-  ()
-  ((at ?package ?location)
-   (:protection (at ?truck ?location)))
-  ((in ?package ?truck)))
+(:op (!drive-to ?truck ?old-loc ?location)
+   :delete ((at ?truck ?old-loc))
+   :add ((at ?truck ?location)
+           (:protection (at ?truck ?location))))
+(:op (!pick-up ?truck ?package ?location)
+  :delete
+    ((at ?package ?location)
+     (:protection (at ?truck ?location)))
+   :add ((in ?package ?truck)))
 @end lisp
 
 As noted above, the head of the operator is a primitive task atom, so it
@@ -1524,33 +1534,59 @@ multiple unifiers for preconditions as long as no two unifiers can
 provide different values for a variable that appears in the add list,
 delete list, or cost.
 @menu
-* Operators Alternative Syntax::
+* Operators Legacy Syntax::
 @end menu
 
-@node Operators Alternative Syntax,  , Operators, Operators
-@subsection Operators: Alternative Syntax
-@anchor{#operators-alternative-syntax}
-In practice, we have found that operator definitions are prone to
-hard-to-detect syntax errors that can give rise to difficult to identify
+@node Operators Legacy Syntax,  , Operators, Operators
+@subsection Operators: Legacy Syntax
+
+In our work with @shoptwo{}, we found that operator definitions in its
+original syntax were prone to
+hard-to-detect syntax errors and typos that can give rise to difficult to identify
 “garbage in/garbage out” bugs. Particularly prevalent are
 hard-to-identify bugs arising when a programmer inadvertently reverses
 the order of add and delete lists in a @sysname {} operator. These problems
 are exacerbated by the extreme permissiveness of @sysname's parser.
-Accordingly, we provide an alternative syntax based on keyword
-arguments, instead. The new @sysname {} operators are written in this form:
+This led us to the new syntax, described above, which relies on keywords
+to make operator definitions more readable, and less error-prone.  Our
+new syntax also
+supports arbitrary order and the omission of empty components, without
+the ``DWIM'' parsing in @shoptwo{}.
+Because of its many advantages, so we encourage you to adopt the new
+syntax, 
+instead of continuing to use the “classical” form described here,
+although it is still supported.
+
+The original operator definition syntax was as follows:
 
 @lisp
-(:op @emph{head}
-       [:add @emph{add-list}]
-       [:delete @emph{delete-list}]
-       [:precond @emph{precondition}]
-       [:cost @emph{cost-fn}])
+(:operator @emph{head precondition delete-list add-list} @emph{[c]})
 @end lisp
 
-The arguments marked with keywords are all optional, and may appear in
-any order. The add-list, and delete-list default to being empty. The
-preconditions default to being vacuously true, and the cost defaults to
-1.0.
+The two operators described above are written in the old syntax as
+follows:
+
+@lisp
+(:operator (!drive-to ?truck ?old-loc ?location)
+   ()
+   ((at ?truck ?old-loc))
+   ((at ?truck ?location)
+    (:protection (at ?truck ?location))))
+(:operator (!pick-up ?truck ?package ?location)
+  ()
+  ((at ?package ?location)
+   (:protection (at ?truck ?location)))
+  ((in ?package ?truck)))
+@end lisp
+
+For backwards compatibility with SHOP 1.x, @sysname {} will also accept
+operators where the precondition @emph{P} is missing. In this case the
+domain definition pre-processing code puts a null precondition into the
+operator, which is always satisfied. @emph{@sysname's ability to recognize
+operators without preconditions is deprecated and is likely to disappear
+in the future.}
+
+
 
 @node  Methods, Planning Domain, Operators, The SHOP3 Formalism
 @section  Methods
