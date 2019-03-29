@@ -105,9 +105,6 @@ do NOT emit singleton variable warnings.")
           ((= lax 3) nil)
           (t (and (atom (car ax)) (listp (cadr ax)) (rest-shop2-axiom-p (cddr ax)))))))
 
-;;; MAKE-PROBLEM creates a planning problem named PROBLEM-NAME
-;;; by putting STATE and TASK onto PROBLEM-NAME's
-;;; property list under the indicators :STATE and :TASKS.
 #+allegro (excl::define-simple-parser make-problem second :shop3-problem)
 
 ;;; this must be a variable, rather than an optional argument, because
@@ -118,6 +115,11 @@ do NOT emit singleton variable warnings.")
 
 (defun make-problem (problem-name-etc state tasks &rest extras
                      &aux domain-name)
+   "MAKE-PROBLEM creates a planning problem named PROBLEM-NAME
+by putting STATE and TASK onto PROBLEM-NAME's property list under the
+indicators :STATE and :TASKS.  As a side effect, sets the global
+variable *PROBLEM*."
+
   (let ((extra (unless (keywordp (first extras)) (pop extras))))
     ;; if extra is given, then the args are problem-name, domain-name, state, tasks
     ;; in that case, we want to ignore domain-name

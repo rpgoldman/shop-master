@@ -1698,8 +1698,10 @@ are left in the syntax for backward compatibility.
 @anchor{#extended-form}
 The extended form of the @sysname {} domain definition looks like this:
 
+@lisp
 (defdomain (@emph{domain-name} &rest @emph{args}) (@emph{i@sub{1}}
 @emph{i@sub{2}} ... @emph{i@sub{n}}))
+@end lisp
 
 @emph{args} includes the following keyword arguments:
 
@@ -1719,6 +1721,8 @@ backward compatibility, but I would like to see this move to defaulting
 to T.
 
 @end itemize
+
+@vindex *domain*
 
 This is actually a bit of a kludge. The existing defdomain form, as a
 side-effect, sets the global variable @var{*domain*}. If this were only a
@@ -1743,7 +1747,10 @@ do not, you should ignore the extended form.
 
 @node Inclusion directives,  , Extended form, Planning Domain
 @subsection Inclusion directives
-@anchor{#inclusion-directives}
+@cindex :include
+@cindex include directives
+@cindex domain inclusion
+
 A domain definition can include the items of another domain by reference
 using the include directive:
 
@@ -1755,7 +1762,8 @@ using the include directive:
 for example
 
 @lisp
-(:include flight-operators #.(asdf:system-relative-pathname "core-domains" "domains.lisp"))
+(:include flight-operators
+  #.(asdf:system-relative-pathname "core-domains" "domains.lisp"))
 @end lisp
 
 
@@ -1766,7 +1774,11 @@ pathname.
 
 @node  Planning Problem, Planning Problem Set, Planning Domain, The SHOP3 Formalism
 @section  Planning Problem
-@anchor{#planning-problem}
+
+@findex defproblem
+@cindex planning problem
+@vindex *problem*
+
 A @strong{planning problem} has the form
 
 (defproblem @emph{problem-name domain-name} (@emph{a@sub{1}}
@@ -1779,9 +1791,16 @@ tasks in @emph{T,} using the operators, methods and axioms in
 @emph{domain-name,} starting in an initial state defined by the atoms
 a@emph{@sub{1}} through a@emph{@sub{n}}.
 
+@include include/macro-shop-defproblem.texinfo
+
+The corresponding functional interface is:
+
+@include include/fun-shop-make-problem.texinfo
+
 @node  Planning Problem Set, Plans, Planning Problem, The SHOP3 Formalism
 @section  Planning Problem Set
-@anchor{#planning-problem-set}
+@findex def-problem-set
+
 A @strong{planning problem set} has the form
 
 @lisp
@@ -3202,8 +3221,8 @@ syntax used in @sysname:
 @c (!ride ?bus ?x ?y)))(:operator (!hail ?vehicle ?location)() ()((at ?vehicle ?location)))(:operator (!wait-for ?bus ?location)() ()((at ?bus ?location)))(:operator (!ride ?vehicle ?a ?b)()@*
 @c ((at ?a) (at ?vehicle ?a))((at ?b) (at ?vehicle ?b)))(:operator (!set-cash ?old ?new)((have-cash ?old))((have-cash ?old))((have-cash ?new)))(:operator (!walk ?here ?there)((at ?here))((at ?here))((at ?there)))))}
 @item 
-@strong{Previous syntax}
- @tab @strong{New Syntax}
+@strong{@sc{Shop1} syntax}
+ @tab @strong{@sc{Shop2} Syntax}
 @item 
 (make-domain 'travel
 
