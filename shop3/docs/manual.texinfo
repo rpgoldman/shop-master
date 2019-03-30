@@ -572,7 +572,7 @@ returns the lowest cost plan that it found during that time. This
 functionality is inspired, in part, by Anytime Algorithms [Dean and
 Boddy, 1998].
 
-@item
+@item @anchor{#explanation}
 If @emph{explanation} is non-nil, @sysname {} adds extra information at the
 end of each operator explaining how the preconditions for that operator
 were satisfied. Currently supports only logical atoms, and, and or; it
@@ -580,7 +580,8 @@ doesn't work with forall, not, eval, etc. If this feature is used with
 the external-access-hook feature (see Section 5.4), any attribution
 information provided by the external-access-hook routine is included in
 the relevant explanation. The default value of @emph{explanation} is
-nil.
+@code{nil}. 
+@cindex explanation
 
 @item
 The @emph{plan-tree} argument defaults to nil; if true, the planner will
@@ -608,19 +609,17 @@ houston boston) with cost 200 and (!drive boston springfield) with cost
 
 @node Tracing, Other Debugging Features, Executing the Planner, Running SHOP3
 @section Tracing
-@anchor{#tracing}
+@findex shop-trace
+@findex shop-untrace
 There are two functions used for controlling the tracing mechanism in
-@sysname: shop-trace and shop-untrace. These are similar to Lisp's trace
+@sysname: @code{shop-trace} and @code{shop-untrace}. These are similar to Lisp's trace
 and untrace functions. Once they have been invoked, subsequent calls to
 find-plans or do-problems will print out information about elements of
 the domain for which tracing is enabled whenever those elements are
 encountered. More specifically:
 
 @itemize
-@item
-@lisp
-(shop-trace @var{item})
-@end lisp
+@item @code{(shop-trace @var{item})}
 will turn on tracing for @var{item}, which may be any
 of the following:
 @itemize
@@ -659,13 +658,23 @@ of items
 @code{(shop-untrace)} will turn off tracing for all items
 @end itemize
 
+@include include/macro-shop-shop-trace.texinfo
+
 @node Other Debugging Features, Syntax Checks, Tracing, Running SHOP3
 @section Other Debugging Features
-@anchor{#other-debugging-features}
-There are three variables, namely *current-state*, *current-plan*, and
-*current-tasks*, in @sysname. These variables can be used to monitor the
+@vindex *current-state*
+@vindex *current-plan*
+@vindex *current-tasks*
+@vindex *break-on-backtrack*
+@findex print-current-state
+@findex print-current-plan
+@findex print-current-tasks
+
+There are three variables, namely @code{*current-state*}, @code{*current-plan*}, and
+@code{*current-tasks*}, in @sysname. These variables can be used to monitor the
 current status of the state, current plan and the list of current tasks
 to be accomplished respectively. Since these are the internal variables
+
 of the @sysname {} planning system, the following functions are defined to
 access the current contents of those variables: @code{print-current-state},
 @code{print-current-plan}, and @code{print-current-tasks}, respectively. Note that
@@ -710,7 +719,10 @@ Lisp environment to throw into a break loop when @sysname {} backtracks.
 
 @node Syntax Checks, Debugging Suggestions, Other Debugging Features, Running SHOP3
 @section Syntax Checks
-@anchor{#syntax-checks}
+
+@cindex singleton variables
+@cindex anonymous variables
+
 We have adopted for @sysname {} the “singleton variable” check common in
 Prolog implementations. Logic variables are used to express unification
 constraints on expressions. In practice, a singleton logical variable in
@@ -718,7 +730,7 @@ a @sysname {} expression (a method, operator, or axiom definition) is often a
 typographical error. Accordingly, @sysname {} will issue a warning when it
 encounters a logical variable used only once. If the single use is
 correct, the proper (and nicely self-documenting) way to disable this
-warning is to use an @emph{anonymous variable} (see page 7).
+warning is to use an @emph{anonymous variable} (see @pxref{Symbols}).
 
 @node Debugging Suggestions, Hook Routines, Syntax Checks, Running SHOP3
 @section Debugging Suggestions
@@ -728,7 +740,7 @@ general recipe may help you home in on bugs in your domain definition:
 
 @enumerate 
 @item
-Start by doingo@code{(SHOP-TRACE :TASKS)} and then try @code{FIND-PLANS} again.
+Start by doing @code{(SHOP-TRACE :TASKS)} and then try @code{FIND-PLANS} again.
 
 @item
 In many cases, the domain will be written so that there will be little
@@ -757,7 +769,7 @@ in @sysname {} domains.
 
 @node Hook Routines,  , Debugging Suggestions, Running SHOP3
 @section Hook Routines
-@anchor{#hook-routines}
+@cindex hook-routines
 @sysname {} recognizes several different hook routines. These are Lisp
 routines that may be defined by the user; if they are defined, they are
 invoked under specific circumstances. Hook routines are typically used
@@ -767,7 +779,8 @@ There are three hooks that are recognized by @sysname:
 
 @itemize
 @item
-@code{(plan-found-hook state which plan cost depth)}
+@code{(plan-found-hook state which plan cost depth)} 
+@findex plan-found-hook
 If this routine is defined, @sysname {} invokes it whenever it finds a plan.
 It can be useful for displaying and/or recording details about the plan.
 The arguments are the current state, the value for the :which argument
@@ -775,14 +788,16 @@ that was provided to the planner, the plan, the cost of the plan, and
 the search depth at which the plan was found.
 @item
 @code{(trace-query-hook type item additional-information state-atoms)}
+@findex trace-query-hook
 If this routine is defined, @sysname {} invokes it whenever it invokes the
 @c FIXME: fix cross-reference
-tracing mechanism (See Section 5.2). The arguments include the type of
+tracing mechanism (@pxref{Tracing}). The arguments include the type of
 item being traced (e.g., @code{:task}, @code{:method}), the item, the list of Lisp
 values that are printed by the tracing mechanism, and a list of logical
 atoms in the current state.
 @item
 @code{(external-access-hook query)}
+@findex external-access-hook
 This hook routine is intended to allow @sysname {} to use an external source
 (such as a database) to determine the applicability of methods and
 operators. To use this hook routine, a domain must include one or more
@@ -797,8 +812,7 @@ form @code{'(and (@var{pred} @var{val} @var{val})...)}. It returns a list of res
 each of which is a list of two elements: an attribution and a list of
 bindings for the unbound variables in the query. The attribution is
 stored for use with the @emph{explanation} option for the planning
-@c FIXME -- redo cross-reference
-system (See Section 5.1). For example, consider a method that has the
+system (@pxref{#explanation}). For example, consider a method that has the
 following precondition:
 
 @lisp
