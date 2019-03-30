@@ -376,9 +376,11 @@ The keyword arguments to find-plans and do-problems are as follows:
 
 @itemize
 @item
-@emph{which} says what kind of search to do. Here are its possible
-values and what they mean. The default value of @emph{which} is the
-value of the global variable @code{*which*} (whose default value is @code{:first}).
+@var{which} says what kind of search to do. Here are its possible
+values and what they mean. The default value of @var{which} is the
+value of the global variable @code{*which*} (whose default value is
+@code{:first}).
+@vindex *which*
 
 @multitable {:all-shallowest} {Depth-first search for the shallowest plan or the first such} 
 @item 
@@ -407,49 +409,51 @@ least-cost plan
  @tab Iterative-deepening search for all shallowest plans
 @end multitable
 
-The :id-all and :id-first options are equivalent to taking a modified
-version of find-plans that backtracks each time it reaches depth
+The @emph{iterative deepening} options, @code{:id-all} and @code{:id-first}, are equivalent to taking a modified
+version of @code{find-plans}
+ that backtracks each time it reaches depth
 @emph{d}, and calling it repeatedly with @emph{d} = 1, 2, ..., until a
 plan is found.
 
 @item
-@emph{verbose} says what information to print out, as shown in the
-following table. The default value for @emph{verbose} is 1.
+@var{verbose} says what information to print out, as shown in the
+following table. The default value for @var{verbose} is 1.
+@anchor{#verbose}
 
 @multitable {3 or :long-plans} {The statistics plus a succinct version of each plan found} 
 @item 
 @strong{Value }
  @tab @strong{What to print }
 @item 
-0 or nil
+0 or @code{nil}
  @tab Nothing
 @item 
-1 or :stats
+1 or @code{:stats}
  @tab Some statistics about the search
 @item 
-2 or :plans
- @tab The statistics plus a succinct version of each plan found
-(internal operators and operator costs are omitted).
+2 or @code{:plans}
+ @tab The statistics plus a succinct version of each plan found:
+internal operators 
+(@pxref{#internal-operators, internal operators, internal operators}),
+and operator costs are omitted).
 @item 
-3 or :long-plans
+3 or @code{:long-plans}
  @tab The statistics plus the complete version of each plan found
 @end multitable
 
-@item
-@emph{If gc} is non-nil, then find-plans calls the garbage collector
+@item If
+@var{gc} is non-nil, then @code{find-plans} calls the garbage collector
 just before starting its search, thus making it somewhat easier to get
-repeatable experimental results. Note that this feature of @sysname {} is only
-supported under Macintosh Common Lisp and Allegro Common Lisp; in all
-other Lisp implementations the value for this keyword is ignored. The
-default value of gc is @emph{t.}
+repeatable experimental results. The
+default value of @var{gc} is @code{T}.
 
 @item
-If @emph{pp} is non-nil, then all printing done by @sysname {} is performed
+If @var{pp} is non-nil, then all printing done by @sysname {} is performed
 using the Common Lisp pretty-printing mechanism. This typically leads to
-more easily read output. The default value of @emph{pp} is t.
+more easily read output. The default value of @var{pp} is @code{T}.
 
 @item
-The @emph{state} argument controls how states are represented
+The @var{state} argument controls how states are represented
 internally. @sysname {} can have different performance characteristics
 depending on the value provided to this augment. If you are encountering
 out-of-memory errors in @sysname {} or you want to get the maximum speed
@@ -458,10 +462,10 @@ experiment with different values for this argument. The default value is
 :mixed, which represents states using a combination of lists and hash
 tables; this value has been shown to provide a reasonably good
 combination of speed and memory usage on a variety of test problems. The
-other values are :list, :hash, and :bit.
+other values are @code{:list}, @code{:hash}, and @code{:bit}.
 
 @item
-The @emph{optimize-cost} argument is used to perform planning with
+The @var{optimize-cost} argument is used to perform planning with
 branch-and-bound optimization of the total plan cost. The default value
 for this argument is nil. If the value of this argument is nil, the
 optimization feature is disabled. If the value of the argument is t,
@@ -489,7 +493,7 @@ them all the way to the end. In some cases, this will mean that (:which
 does not.
 
 @item
-@code{(:which :first :optimize-cost @emph{number})}
+@code{(:which :first :optimize-cost @var{number})}
 
 Under these arguments, @sysname {} returns the first plan found whose total
 cost is less than or equal to the number given. If there is no plan
@@ -508,7 +512,7 @@ plan has a lower total cost. Obviously, all plans returned under these
 options will have equal total cost.
 
 @item
-@code{(:which :all :optimize-cost @emph{number})}
+@code{(:which :all :optimize-cost @var{number})}
 
 Under these arguments, @sysname {} returns all plans with total cost less than
 or equal to the given number.
@@ -524,7 +528,7 @@ incidentally, is not necessarily the same thing as the shallowest of all
 cheapest plans).
 
 @item
-@code{(:which :shallowest :optimize-cost @emph{number})}
+@code{(:which :shallowest :optimize-cost @var{number})}
 
 Under these arguments, @sysname {} returns a plan which has the shallowest
 depth of all valid plans and whose total cost is less than or equal to
@@ -541,7 +545,7 @@ depth of all valid plans and for which there is no other shallowest
 depth valid plan which has a lower total cost.
 
 @item
-@code{(:which :all-shallowest :optimize-cost @emph{number})}
+@code{(:which :all-shallowest :optimize-cost @var{number})}
 
 Under these arguments, @sysname {} returns all plans which have the shallowest
 depth and whose total cost is less than or equal to the given number.
@@ -549,23 +553,23 @@ depth and whose total cost is less than or equal to the given number.
 @item
 @code{(:which :id-first)} or @code{(:which :id-all)}
 
-The @emph{id-first} and @emph{id-all} arguments produce the same results
+The @code{:id-first} and @code{:id-all} options produce the same results
 as the @emph{shallowest} and @emph{all-shallowest} arguments,
-respectively for each different combination with :optimize-cost. Note,
+respectively for each different combination with @code{:optimize-cost}. Note,
 however, that there are domains for which @sysname {} will terminate using
 @emph{id-first} and @emph{id-all} and will not terminate using other
-values for :which.
+values for @code{:which}.
 
 @item
-The @emph{time-limit} argument may either nil or a number. Its default
+The @var{time-limit} argument may either nil or a number. Its default
 is nil and if it is nil, no time limit is imposed on the planning
-process. If the @emph{time-limit} argument is a number, @sysname {} will check
+process. If the @var{time-limit} argument is a number, @sysname {} will check
 the elapsed CPU time at the start of each step of the planning process,
 and if the number of seconds elapsed is greater than the argument value,
 @sysname {} will immediately terminate. The main use for this feature is in
 combination with (:optimize-cost t) argument, in order to return the
 optimal value found within the given time limit. For example, consider
-the call (find-plans 'foo :verbose 1 :optimize-cost t :time-limit 120).
+the call @code{(find-plans 'foo :verbose 1 :optimize-cost t :time-limit 120)}.
 This call addresses a problem named @emph{foo}, and runs until it either
 finds the minimum cost plan or until 2 minutes have elapsed. It then
 returns the lowest cost plan that it found during that time. This
@@ -614,7 +618,7 @@ houston boston) with cost 200 and (!drive boston springfield) with cost
 There are two functions used for controlling the tracing mechanism in
 @sysname: @code{shop-trace} and @code{shop-untrace}. These are similar to Lisp's trace
 and untrace functions. Once they have been invoked, subsequent calls to
-find-plans or do-problems will print out information about elements of
+@code{find-plans} or @code{do-problems} will print out information about elements of
 the domain for which tracing is enabled whenever those elements are
 encountered. More specifically:
 
@@ -812,7 +816,7 @@ form @code{'(and (@var{pred} @var{val} @var{val})...)}. It returns a list of res
 each of which is a list of two elements: an attribution and a list of
 bindings for the unbound variables in the query. The attribution is
 stored for use with the @emph{explanation} option for the planning
-system (@pxref{#explanation}). For example, consider a method that has the
+system (@pxref{#explanation, explanation, explanation}). For example, consider a method that has the
 following precondition:
 
 @lisp
@@ -1511,6 +1515,8 @@ represent this, we might use the following operators:
    :add ((in ?package ?truck)))
 @end lisp
 
+@cindex internal operators
+@anchor{#internal-operators}
 As noted above, the head of the operator is a primitive task atom, so it
 must begin with a primitive task symbol, i.e., a symbol that begins with
 an exclamation point. Note that operator names which begin with
@@ -1525,8 +1531,10 @@ identical to the syntax for other operators. @sysname {} handles internal
 operators exactly the same way as ordinary operators during planning.
 @sysname {} includes these operators in any plans that it returns at the end
 of execution. It may, however, omit them from the printout of the final
-plan (depending on the value of the :verbose argument described in
-Section 5.1). The primary reason that the internal operator syntax
+plan (depending on the value of the @code{:verbose} argument
+(@pxref{#verbose, verbose, verbose}). 
+
+The primary reason that the internal operator syntax
 exists in @sysname {} is so that automated systems which use @sysname {} plans as an
 input can easily distinguish between those operators which involve
 action and those which were merely internal to the planning process.
@@ -1826,7 +1834,8 @@ of a planning problem.
 
 @node  Plans,  , Planning Problem Set, The SHOP3 Formalism
 @section  Plans
-@anchor{#plans}
+@cindex plans
+
 The previous subsections describe the inputs to @sysname. This subsection
 describes the result that @sysname {} produces. A @strong{plan} is a list of
 the form
@@ -1842,6 +1851,13 @@ executing @emph{o@sub{1}}, @emph{o@sub{2}}, ..., @emph{o@sub{n}} in the
 order given. The @strong{cost} of the plan @emph{p} is @emph{c@sub{1 }}+
 @emph{c@sub{2 }}+ ... + @emph{c@sub{n}} (thus, the cost of the empty
 plan is 0).
+
+Often what is wanted is a truncated version of the plan sequence, with
+the @emph{internal operators} 
+(@pxref{#internal-operators,internal operators,internal operators}) 
+and costs removed.  For this, one may use
+
+@include include/fun-shop-shorter-plan.texinfo
 
 
 @node PDDL Support, The SHOP Theorem Prover, The SHOP3 Formalism, Top
@@ -2120,7 +2136,11 @@ expressions -- renaming variables to be unique.
 
 @node Internal Technical Information, Version Differences, The SHOP Unifier, Top
 @chapter Internal Technical Information
-@anchor{#internal-technical-information}
+
+@strong{This section has not been updated since the transition
+from @shopTwo {} to @sysname {}, and its accuracy is likely
+compromised.} @i{Caveat lector.}
+
 This section presents information about the internal workings of the
 @sysname {} planning process. @strong{Important Note}: This section is
 primarily of interest to planning researchers and planning system
