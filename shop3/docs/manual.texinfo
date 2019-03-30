@@ -3005,20 +3005,19 @@ into answers
 
 @strong{end} find-satisfiers
 
-In this pseudo-code, *axioms* is an internal variable of @sysname. It holds
+In this pseudo-code, @code{*axioms*} is an internal variable of @sysname. It holds
 the list of the axioms defined for the domain under consideration.
 @end quotation
-(apply-method S t m)
+@code{(apply-method S t m)}
 
-@quotation
-If @emph{S} is a state, @emph{t} is a task, and @emph{m} = (:method h
-C@sub{1} T@sub{1} C@sub{2} T@sub{2} ... C@sub{k} T@sub{k}) is a method,
+If @emph{S} is a state, @emph{t} is a task, and 
+@emph{m} = @code{(:method h C@sub{1} T@sub{1} C@sub{2} T@sub{2} ... C@sub{k} T@sub{k}) }is a method,
 then this function does the following:
-@end quotation
+
 @itemize
 @item
 If @emph{m} is not applicable to @emph{t} in @emph{S}, then the function
-returns the symbol FAIL.
+returns the symbol @code{FAIL}.
 
 @item
 If @emph{m} is applicable to @emph{t} in @emph{S} and @emph{C@sub{i}} is
@@ -3028,31 +3027,24 @@ in @emph{S}.
 
 @end itemize
 
-(apply-operator S t o)
+@code{(apply-operator S t o)}
 
-@quotation
 If @emph{S} is a state, @emph{t} is a task, and @emph{o} is an operator,
 then this function does the following:
-@end quotation
+
 @itemize
 @item
-@quotation
 If there is an mgu @emph{u} for @emph{o} and @emph{t}, then it returns
 the state produced by executing @emph{o@sup{u}} in @emph{S}.
-@end quotation
+
 @item
-@quotation
 Otherwise, it returns FAIL.
-@end quotation
 @end itemize
 
-(find-plans problem &key which verbose pshort gc pp state plan-tree
-
-@quotation
-optimize-cost time-limit explanation)
+@code{(find-plans problem &key which verbose pshort gc pp state plan-tree optimize-cost time-limit explanation)}
 
 This function implements the @sysname {} planning algorithm. For more about
-the arguments to and use of this function, see Section 5.1. A brief
+the arguments to and use of this function, @pxref{find-plans}. A brief
 overview of the algorithm for this function is presented here. Calling
 find-plans is roughly equivalent to calling the following pseudocode,
 where @emph{S} is the current state, @emph{T} is a partially ordered set
@@ -3130,15 +3122,15 @@ by replacing @emph{r} with @emph{R'}
 @strong{return} <@emph{r}'@strong{,}@emph{R''}>
 
 @strong{end} reduction
-@end quotation
-(defdomain @emph{domain-name D})
 
-@quotation
+@code{(defdomain @emph{domain-name D})}
+
+
 This macro gives the name @emph{domain-name} to planning domain
 @emph{D}. (More specifically, what it does is to store @emph{D}'s
 axioms, operators, and methods on @emph{domain-name}'s property list.)
-@end quotation
-(defproblem @emph{problem-name domain-name S T})
+
+@code{(defproblem @emph{problem-name domain-name S T})}
 
 
 This macro gives the name @emph{problem-name} to the planning problem
@@ -3152,11 +3144,11 @@ property list.)
 @end lisp
 
 
-@quotation
+
 This macro gives the name @emph{set-name} to the set of planning
 problems in @emph{list-of-problems}. (More specifically, what it does is
 to store @emph{list-of-problems} on @emph{set-name}'s property list.)
-@end quotation
+
 Note that for backwards compatibility, @sysname {} also accepts the forms
 make-domain, make-problem, and make-problem-set, which were employed in
 SHOP 1.x, using the same arguments as defdomain, defproblem, and
@@ -3165,71 +3157,65 @@ that in the latter case since the form itself is a macro, the arguments
 are not evaluated. This changes the syntax one uses. Thus in a SHOP 1.x
 domain one might define a problem as
 
-(make-problem ‘problem-name ‘domain-name
+@lisp
+(make-problem ‘@var{problem-name} ‘@var{domain-name}
+    ‘@var{(list of state atoms)}
+    ‘@var{(list of tasks to be accomplished)})
+@end lisp
 
-‘(list of state atoms)
-
-@quotation
-‘(list of tasks to be accomplished))
-@end quotation
 whereas in @sysname {} the syntax becomes
 
+@lisp
 (defproblem problem-name domain-name
+    (list of state atoms)
+    (list of tasks to be accomplished))
+@end lisp
 
-(list of state atoms)
-
-@quotation
-(list of tasks to be accomplished))
-@end quotation
 where the arguments are all quoted in the SHOP 1.x make-problem
 function, they are unquoted when using the @sysname {} defproblem macro.
 
-(print-axioms &optional @emph{name})
+@code{(print-axioms &optional @var{name})}
 
-@quotation
 This function prints a list of the axioms for the domain whose name is
 @emph{name}; defaults to the most recently defined domain.
-@end quotation
-(print-operators &optional @emph{name})
 
-@quotation
+@code{(print-operators &optional @var{name})}
+
 This function prints a list of the operators for the domain whose name
 is @emph{name}; defaults to the most recently defined domain.
-@end quotation
-(print-methods &optional @emph{name})
 
-@quotation
+@code{(print-methods &optional @var{name})}
+
 This function prints a list of the methods for the domain whose name is
 @emph{name}; defaults to the most recently defined domain.
-@end quotation
-(get-state @emph{name})
+
+@code{(get-state @var{name})}
 
 This function returns the initial state for the problem whose name is
-@emph{name}.
+@var{name}.
 
-(get-tasks @emph{name})
+@code{(get-tasks @var{name})}
 
 This function returns the list of tasks for the problem whose name is
-@emph{name}.
+@var{name}.
 
-(get-problems @emph{name})
+@code{(get-problems @var{name})}
 
-@quotation
 This function returns the list of problem names for the problem set
-whose name is @emph{name}.
-@end quotation
-(do-problems name-or-list &rest keywords)
+whose name is @var{name}.
 
-@quotation
-@emph{name-or-list} should be either a list of problem names or the name
-of a problem set. This function runs find-plans on each planning problem
+@code{(do-problems @var{name-or-list} &rest keywords)}
+
+@var{name-or-list} should be either a list of problem names or the name
+of a problem set. This function runs @code{find-plans} on each planning problem
 specified by the list or problem set, and then returns nil. The keywords
 are simply passed on to find-plans.
-@end quotation
+
 
 
 @node Version Differences, General Notes on SHOP3, Internal Technical Information, Top
 @chapter Differences between SHOP 1.x, SHOP2 and @sysname {}
+
 The differences between @sysname {} and SHOP 1.x can be grouped in two sets:
 syntactic changes in the domain definitions and differences in
 functionality.
@@ -3755,6 +3741,9 @@ manual in one of these non-Texinfo translated forms, that's fine, but
 if you want to @emph{modify} this manual, you are strongly advised to
 seek out a Texinfo version and modify that instead of modifying a
 translated version.
+
+This manual was made possible in part by the @code{SB-TEXINFO} library
+provided by Nikodemus Siivola and Rudi Schlatte, for which we are very grateful.
 
 
 @bye
