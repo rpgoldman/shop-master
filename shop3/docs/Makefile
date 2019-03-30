@@ -11,8 +11,8 @@ clean:
 include-stamp: ../*.lisp ../*.asd
 	sbcl \
 	--eval '(let ((asdf:*central-registry* (cons (truename #p"../../jenkins/ext/sb-texinfo/") asdf:*central-registry*))) (require :sb-texinfo))' \
-	--eval '(let ((asdf:*central-registry* (append (list (truename #p"../") (truename #p"../shop3-theorem-prover.api/")) asdf:*central-registry*))) (require :shop3) (require :shop3-thmpr-api))' \
-	--eval '(sb-texinfo:generate-includes "include/" (list :shop3 :shop3.unifier :shop3.common :shop3.theorem-prover :shop3.theorem-prover-api) :base-package :shop3 :extra-symbols (list (quote shop3.unifier::binding)))' \
+	--eval '(let ((asdf:*central-registry* (append (list (truename #p"../") (truename #p"../shop3-theorem-prover.api/")) asdf:*central-registry*))) (require :shop3) (require :shop3-thmpr-api) (require :shop3/plan-grapher))' \
+	--eval '(sb-texinfo:generate-includes "include/" (list :shop3 :shop3.unifier :shop3.common :shop3.theorem-prover :shop3.theorem-prover-api :shop3.plan-grapher) :base-package :shop3 :extra-symbols (list (quote shop3.unifier::binding)))' \
 	--eval '(quit)'
 	touch include-stamp
 

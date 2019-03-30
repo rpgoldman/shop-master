@@ -74,6 +74,7 @@ College Park, MD 20742, USA
 * PDDL Support::
 * The SHOP Theorem Prover::
 * The SHOP Unifier::
+* Plan Grapher::
 * Internal Technical Information::
 * Differences between SHOP 1x, SHOP2, and SHOP3: Version Differences.
 * General Notes on @sysname {}: General Notes on SHOP3.
@@ -2073,7 +2074,7 @@ of axioms (although it can be extended by the programmer).
 @include include/class-shopthpr-thpr-domain.texinfo
 
 
-@node The SHOP Unifier, Internal Technical Information, The SHOP Theorem Prover, Top
+@node The SHOP Unifier, Plan Grapher, The SHOP Theorem Prover, Top
 @chapter The SHOP Unifier
 
 The @sysname{} unifier may be loaded stand-alone with
@@ -2133,12 +2134,23 @@ expressions -- renaming variables to be unique.
 
 @include include/fun-shopunif-standardize.texinfo
 
+@node Plan Grapher, Internal Technical Information, The SHOP Unifier, Top
+@chapter Plan Grapher
 
-@node Internal Technical Information, Version Differences, The SHOP Unifier, Top
+In order to make the plan trees that @sysname{} can produce more useful,
+we have developed the @sysname{} plan grapher.
+
+@include include/fun-spg-graph-plan-tree.texinfo
+@include include/fun-spg-graph-enhanced-plan-tree.texinfo
+
+@include include/class-spg-enhanced-plan-tree-graph.texinfo 
+@include include/class-spg-plan-tree-graph.texinfo 
+
+@node Internal Technical Information, Version Differences, Plan Grapher, Top
 @chapter Internal Technical Information
 
 @strong{This section has not been updated since the transition
-from @shopTwo {} to @sysname {}, and its accuracy is likely
+from @shoptwo {} to @sysname {}, and its accuracy is likely
 compromised.} @i{Caveat lector.}
 
 This section presents information about the internal workings of the
